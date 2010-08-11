@@ -1,0 +1,112 @@
+<?xml version='1.0'?>
+
+<project>
+        <name>DP-SLAM</name>
+
+        <author>
+		<name>Austin Eliazar</name>
+		<url>http://www.cs.duke.edu/~eliazar</url>
+	</author>
+        <author>
+		<name>Ronald Parr</name>
+		<url>http://www.cs.duke.edu/%7Eparr</url>
+	</author>
+
+	<url>http://www.cs.duke.edu/~parr/dpslam/</url>
+
+        <briefdescription>
+	 DP-SLAM aims to achieve truly simultaneous localization and
+	 mapping without landmarks. While DP-SLAM is compatible with
+	 techniques that correct maps when a loop is closed, we have
+	 found that DP-SLAM is accurate enough that no special loop
+	 closing techniques are required in most cases.  DP-SLAM makes
+	 only a single pass over the sensor data.
+         DP-SLAM works by maintaining a joint probability distribution
+         over maps and robot poses using a particle filter. This
+         allows DP-SLAM to maintain uncertainty about the map over
+         multiple time steps until ambiguities can be resolved. This
+         prevents errors in the map from accumulating over time.
+	</briefdescription>
+
+        <description>
+        DP-SLAM uses a particle filter to maintain a joint probability
+        distribution over maps and robot positions.  This would be
+        expensive without some clever data structures since it would
+        require a complete copy of the entire occupancy grid for every
+        particle, and would require making copies of the maps during
+        the resampling phase of the particle filter.  The figure below
+        conceptually shows an ancestry of particles and map updates,
+        with leaves of the ancestry tree pointing to maps.  (Think of
+        each red dot in the ancestry tree as a sampled robot position
+        and the black lines around the red dot as the new observations
+        associated with the current robot position.  The gray lines
+        show piece of the map inherited from the previous particle.)
+        Notice that all maps in this example will agree with the
+        initial observation.  The two leftmost maps will agree on the
+        observations made by the left child of the root, while the two
+        rightmost maps will agree with the observations made by the
+        right child of the root.  It would be a waste of memory and
+        time to store and repeatedly copy these map sections every
+        time a particle is resampled.  Instead, we use a single
+        occupancy grid which stores an observation tree at each
+        square.  As shown below, each particle inserts its
+        observations into the global grid.  These are stored as a
+        balanced tree, indexed on a unique ID assigned to each
+        particle.  The computer science part of the DP-SLAM project
+        involves the algorithms and analysis to show that these data
+        structures can be maintained efficiently.
+	</description>
+
+	<image> 
+		<url>http://www.cs.duke.edu/~parr/dpslam/Wean.html</url>
+		<thumbnailurl>http://www.cs.duke.edu/~parr/dpslam/wean-thumb.png</thumbnailurl>
+		<description>Wean Hall</description>
+	</image>
+	<image> 
+		<url>http://www.cs.duke.edu/~parr/dpslam/C-Wing.html</url>
+		<thumbnailurl>http://www.cs.duke.edu/~parr/dpslam/3cm25-icon.gif</thumbnailurl>
+		<description>C-Wing</description>
+	</image>
+
+
+
+        <requirement>
+	Linux
+	</requirement>
+
+	<map>grid maps</map>
+
+	<input>The approach takes raw laser range data and odometry.</input>
+
+
+	<paper>
+		<title>DP-SLAM: Fast, Robust Simultainous Localization
+                  and Mapping Without Predetermined Landmarks</title>
+		<authorlist>Austin Eliazar, Ronald Parr</authorlist>
+		<publishedin>IJCAI</publishedin>
+		<year>2003</year>
+		<url>http://www.cs.duke.edu/%7Eparr/ijcai03.ps.gz</url>
+	</paper>
+	<paper>
+		<title>DP-SLAM 2.0</title>
+		<authorlist>Austin Eliazar, Ronald Parr</authorlist>
+		<url>http://www.cs.duke.edu/%7Eparr/dpslam2.pdf</url>
+	</paper>
+
+	<license>
+        This Program is provided by Duke University and the authors as
+        a service to the research community. It is provided without
+        cost or restrictions, except for the User's acknowledgment
+        that the Program is provided on an "As Is" basis and User
+        understands that Duke University and the authors make no
+        express or implied warranty of any kind.  Duke University and
+        the authors specifically disclaim any implied warranty or
+        merchantability or fitness for a particular purpose, and make
+        no representations or warranties that the Program will not
+        infringe the intellectual property rights of others. The User
+        agrees to indemnify and hold harmless Duke University and the
+        authors from and against any and all liability arising out of
+        User's use of the Program.
+	</license>
+
+</project>

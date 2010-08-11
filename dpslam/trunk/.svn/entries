@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="5"
+   name=""
+   committed-date="2007-01-15T12:18:35.879083Z"
+   url="https://svn.openslam.org/data/svn/dpslam/trunk"
+   last-author="stachnis"
+   kind="dir"
+   uuid="b4c0cc03-1327-0410-9661-ef90828d0f54"
+   repos="https://svn.openslam.org/data/svn/dpslam"
+   revision="8"/>
+<entry
+   committed-rev="5"
+   name="lowMap.c"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="52e4f84ed707c30c9f91257af86b4a31"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="low.c"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="01087c1d6c6c2ff8495d3d4a5642918b"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="mt-rand.c"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="b92377dd1ded6c552bc7db597a715227"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="lowMap.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="2ac6dd996efa45eca6b6a584dee83fb3"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="low.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="2e64e760f5eb9d55f58c01f006b273a2"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="mt-rand.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="3ed239db314a6b9b574924c24b264d9e"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="laser.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="b2e95895da56bc19e7890774589ef7bd"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="README"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="99433f2449fc503a89dd2456b726b1a4"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="map.c"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="7362165be74aa7294676d0bbaebea12c"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="ThisRobot.cpp"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="022d285724743103e19000abe597089b"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="highMap.c"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="c537f447a06bc7e319f2994e5f8b1ed9"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="high.c"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="c2ef53f9981ec78ac59813e69692aa4d"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="basic.c"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="3c64f7817d4a3c37a039b9ea27748f5a"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="basic.cpp"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="e7bebefd249724e01e2e8620557beebf"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="highMap.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="40ac312a0ce05ce64dbc894bfcad65f7"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="ThisRobot.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="0cc7b999d2e56703753f557d6c9def2d"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="map.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="912435165dc48b50156e7925ba11b418"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="high.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="215da61abd087692b2858872d139a874"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="basic.h"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="e0e96d493d20fe84520f28c2c22eefcb"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="Makefile"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="559a11e9a76fc46e5ac1d32c10d1291a"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="slam.cpp"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="e0c3283f6c6745132b5def32ffbeddad"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:10.000000Z"/>
+<entry
+   committed-rev="5"
+   name="loop5.log"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-15T12:18:35.879083Z"
+   checksum="9dd2fc4eb12e835a6399c1896e47c6a0"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:12.000000Z"/>
+</wc-entries>

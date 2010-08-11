@@ -1,0 +1,87 @@
+<?xml version='1.0'?>
+
+<project>
+        <name>GridSLAM</name>
+
+        <author>
+		<name>Dirk Haehnel</name>
+		<email>dirk.haehnel@gmail.com</email>
+		<url>http://seattle.intel-research.net/people/dhaehnel/</url>
+	</author>
+        <author>
+		<name>Dieter Fox</name>
+		<email>fox@cs.washington.edu</email>
+		<url>http://www.cs.washington.edu/homes/fox/</url>
+	</author>
+        <author>
+		<name>Wolfram Burgard</name>
+		<email>burgard@informatik.uni-freiburg.de</email>
+		<url>http://www.informatik.uni-freiburg.de/~burgard</url>
+	</author>
+        <author>
+		<name>Sebastian Thrun</name>
+		<email>thrun@stanford.edu</email>
+		<url>http://robots.stanford.edu</url>
+	</author>
+
+	<url>http://www.informatik.uni-freiburg.de/~haehnel/old/research/scan-matching-fastslam/index.html</url>
+
+        <briefdescription>
+	 GridSLAM is an easy to use and understand  Rao-Blackwellized particle filer to learn
+	 grid maps from laser range data.
+	</briefdescription>
+
+        <description>
+	The ability to learn a consistent model of its environment is
+        a prerequisite for autonomous mobile robots. A particularly
+        challenging problem in acquiring environment maps is that of
+        closing loops; loops in the environment create challenging
+        data association problems. This work presents a novel
+        algorithm that combines Rao-Blackwellized particle filtering
+        and scan matching. In our approach scan matching is used for
+        minimizing odometric errors during mapping. A probabilistic
+        model of the residual errors of scan matching process is then
+        used for the resampling steps. This way the number of samples
+        required is seriously reduced. Simultaneously we reduce the
+        particle depletion problem that typically prevents the robot
+        from closing large loops. We present extensive experiments
+        that illustrate the superior performance of our approach
+        compared to previous approaches.
+        </description>
+
+	<image> 
+		<url>http://www.informatik.uni-freiburg.de/~haehnel/old/images/wean4th-fastlam-anim-small.gif</url>
+		<thumbnailurl>http://www.informatik.uni-freiburg.de/~haehnel/old/images/wean4th-fastlam-anim-small.gif
+</thumbnailurl>
+		<description>Mapping Animation</description>
+	</image>
+
+
+        <requirement>
+        Linux/Unix, GCC 3.3/4.x
+        </requirement>
+        <requirement>
+	CARMEN
+	</requirement>
+        <requirement>
+	Qt
+	</requirement>
+
+	<map>grid maps</map>
+
+	<input>The approach takes raw laser range data and
+	(scan-matched) odometry.</input>
+
+	<logformat> 
+	Carmen log format as well as Dirk Haehnel's rec format
+	</logformat>
+
+	<paper>
+		<title> A highly efficient FastSLAM algorithm for generating cyclic maps of large-scale environments from raw laser range measurements</title>
+		<authorlist>D. Haehnel, D. Fox, W. Burgard, S. Thrun</authorlist>
+		<publishedin>In Proc. of the Conference on Intelligent Robots and Systems (IROS)</publishedin>
+		<year>2003</year>
+		<url>http://www.informatik.uni-freiburg.de/~haehnel/old/papers/haehnel.iros03.pdf</url>
+	</paper>
+
+</project>

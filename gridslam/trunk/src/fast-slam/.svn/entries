@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="8"
+   name=""
+   committed-date="2007-01-18T09:02:38.947254Z"
+   url="https://svn.openslam.org/data/svn/gridslam/trunk/src/fast-slam"
+   last-author="stachnis"
+   kind="dir"
+   uuid="3dd8368c-1227-0410-bb3b-dd2a2bc7ccc9"
+   repos="https://svn.openslam.org/data/svn/gridslam"
+   revision="10"/>
+<entry
+   committed-rev="8"
+   name="graphics.cpp"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="d49216819c4dfe09b6de8609df235dba"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="utils.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="119c77f93ac8a37902accbd94e21df1e"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="main.cpp"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="cc9eeca6443fad91fdcdd773c9314ac3"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="graphics.h"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="e4c34e80ed83125f18759cd428416398"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="line.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="606743ac9156eccdecf302e6dae7dc84"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="read-ini.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="40ce2637cb227d80e70850e907e82958"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="Makefile"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="fa660b968987215e12c0446aa09f2df7"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="fast-slam.h"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="3df3df06d092fa2958cf75a17d99f9fc"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+</wc-entries>

@@ -1,0 +1,354 @@
+/* map.c
+ * a mapping program for my robot
+ * NOTES:
+ * sizeof(int) = 2;
+ */
+#include "polybot_library/globals.h"
+#include "system.h"
+#include <avr/io.h>
+
+#define MIN_POWER 30
+#define BACKUP_MAX 100
+#define BACKUP_STEER 20
+#define BACKUP_SPEED 100
+#define BACKUP_SLOW 105
+
+/* from compass.s */
+struct heading
+{
+	int x;
+	int y;
+};
+
+/* from compass.s */
+struct heading compass();
+
+/* from compass.s */
+void compass_init();
+
+/* sine table */
+static int sine[64] = {0,6,13,19,25,31,38,44,50,56,62,68,74,80,86,92,98,104,
+109,115,121,126,132,137,142,147,152,157,162,167,172,177,181,185,190,194,198,
+202,206,209,213,216,220,223,226,229,231,234,237,239,241,243,245,247,248,250,
+251,252,253,254,255,255,256,256
+};
+
+/* read data from the sonar */
+u16 getSonar(u08 addr)
+{
+	while(!(UCSRA & (1<<UDRE)) ) /* not ready to transmit */
+	{
+		;/* wait */
+	}
+	UDR = addr;
+	while(!(UCSRA & (1<<UDRE)) ) /* not ready to transmit */
+	{
+		;/* wait */
+	}
+	UDR = 84;
+
+	u08 low, high;
+	u16 result;
+	while(!(UCSRA & (1<<RXC)) )
+	{
+		; /* wait */
+	}
+	high = UDR;
+	while(!(UCSRA & (1<<RXC)) )
+	{
+		; /* wait */
+	}
+	low = UDR;
+	result = high;
+	result = result << 8;
+	result |= low;
+	return result;
+}
+
+/* initializes the USART for communicating with the sonars */
+void sonar_init() {
+	/* USART init code */
+	UCSRB = 0x18; /* RX and TX enable, no interrupts */
+	UCSRC = 0x8E; /* no parity, 1 stop, 8bit */
+	UBRRH = 0x00;
+	UBRRL = 0x67;
+}
+
+u08 IR(u08 addr)
+{
+	u16 dist = analog(addr);
+	delay_ms(1);
+	dist += analog(addr);
+	delay_ms(1);
+	dist += analog(addr);
+	delay_ms(1);
+	dist += analog(addr);
+	dist /= 4;
+	dist = (2112 / (dist + 28)) - 5;
+	return dist;
+}
+
+u16 distance(u08 addr)
+{
+	u16 ir =0;
+	u16 sonar = getSonar(addr);
+	ir = IR(addr);
+	/* ir always reads below 25 when we are close */
+	if (ir < 25)
+	{
+		/* sonar gives anomalous readings when very close */
+		if(ir > 7 && sonar > 50)
+		{
+			return 0;
+		}
+		else
+		{
+			return ir;
+		}
+	}
+	else
+	{
+		return sonar;
+	}
+}
+
+void serv()
+{
+   u08 pos=0;
+   while(1)
+   {
+      set_servo_position(current_pid+2, pos);
+      pos = pos>=250?0:pos+1;
+      delay_ms(current_pid+2);
+   }
+}
+
+void serv2()
+{
+   u08 pos=0;
+   while(1)
+   {
+      set_servo_position(2, pos);
+      pos = pos>=250?0:pos+1;
+      delay_ms(1);
+   }
+}
+
+void serv3()
+{
+   u08 pos=0;
+   while(1)
+   {
+      set_servo_position(3, pos);
+      pos = pos>=250?0:pos+1;
+      delay_ms(2);
+   }
+}
+
+void serv4()
+{
+   u08 pos=0;
+   while(1)
+   {
+      set_servo_position(4, pos);
+      pos = pos>=250?0:pos+1;
+      delay_ms(3);
+   }
+}
+
+void serv5()
+{
+   u08 pos=0;
+   while(1)
+   {
+      set_servo_position(5, pos);
+      pos = pos>=250?0:pos+1;
+      delay_ms(4);
+   }
+}
+
+int main(void)
+{
+	struct heading result;
+	u08 ir=0;
+	u08 i=0;
+	u08 a=120;
+	u08 b=120;
+	u08 backup=0;
+	u08 steer_inc=6;
+	u16 sonar;
+
+	initialize();
+	/* motor_init(); */
+	servo_init();
+	/* set_motor_power(0,0);
+	set_motor_power(1,0); */
+	compass_init();
+
+	set_servo_position(0,120);
+	set_servo_position(1,120);
+	set_servo_position(2,120);
+	set_servo_position(3,120);
+	set_servo_position(4,120);
+	set_servo_position(5,120);
+	while(!get_sw1()) {
+		a = knob();
+		set_servo_position(0,a);
+		clear_screen();
+		print_string("Waiting");
+		next_line();
+		print_int(a);
+		delay_ms(40);
+	}
+	while(1) {
+		u08 sonar[6];
+		/* get sensor readings */
+		for(i=0;i<6;i++) {
+			sonar[i] = analog(i);
+		}
+		if(backup) {
+			if(backup > BACKUP_MAX/2) {
+				a=0; /* brake do nothing */
+				b=118;
+				backup--;
+			} else if(backup == BACKUP_MAX/2){
+				a=120; /* neutral so the esc will reset to neutral */
+				b=118;
+				backup--;
+				if(sonar[3] < sonar[4]) { /* figure out which way is clear */
+					steer_inc = 118 + BACKUP_STEER;
+				} else {
+					steer_inc = 118 - BACKUP_STEER;
+				}
+			} else {
+				if(sonar[1] > 15) {
+					backup = 0; /* set forward and return to going forward */
+					a = 125;
+					b = 118;
+				} else {
+					if(sonar[3] > 13 && sonar[4] > 13) {
+						a = BACKUP_SPEED;
+						b = steer_inc;
+					} else if (sonar[3] > 3 && sonar[4] > 3) { /* backup avoidance */
+						if(sonar[3] < sonar[4]) {
+							a = BACKUP_SLOW;
+							b = 118 + BACKUP_STEER*2;
+						} else {
+							a = BACKUP_SLOW;
+							b = 118 - BACKUP_STEER*2;
+						}
+					} else {
+						a = 125;
+						b = 118;
+						backup = 0; /* abort backing up! */
+					}
+				}
+			}
+		}
+		else {
+			if(sonar[0] > 4 && sonar[1] > 4 && sonar[2] > 4) { /* we're kinda clear */
+				steer_inc = sonar[0]<sonar[1]?sonar[0]:sonar[1]; /* min */
+				steer_inc = steer_inc<sonar[2]?steer_inc:sonar[2]; /* min */
+				/* now steer_inc == min(sonar[0...2]) */
+				if(steer_inc < 20) {
+					a = (steer_inc>>1) + 134; /* speed function */
+				} else {
+					a = 140;
+				}
+				if(steer_inc>35) {
+					steer_inc = 1; /* very little steering */
+				} else if(steer_inc>25) {
+					steer_inc = 2;
+				} else if(steer_inc>18) {
+					steer_inc = 3;
+				} else if(steer_inc>13) {
+					steer_inc = 4;
+				} else {
+					steer_inc = 5; /* lots of steering */
+				}
+				if(sonar[0] < sonar[2]) { /* left is better */
+					/* b<118 */
+					b = 118 - (sonar[2] - sonar[0])*steer_inc;
+				}
+				else if(sonar[0] == sonar[2]) { /* straight ahead */
+					b = 118; /* about center (trimmed) */
+				}
+				else { /* right is better */
+					b = 118 + (sonar[0] - sonar[2])*steer_inc;
+				}
+			}
+			else { /* time to stop! */
+				a = 0;
+				b = 118;
+				backup = BACKUP_MAX; /* set the backup timer */
+			}
+		}
+		set_servo_position(0,a); /* speed */
+		set_servo_position(1,b); /* steer */
+		for(i=0;i<6;i++) {
+			print_int(sonar[i]);
+			print_string(" ");
+			if(i==3) {
+				next_line();
+			}
+		}
+		print_int(backup);
+		print_string(" ");
+		print_int(a);
+		print_string(" ");
+		print_int(b);
+			
+		delay_ms(10);
+		clear_screen();
+	}
+	/* sonar_init(); */
+	system_init();
+	system(serv);
+	system(serv);
+	system(serv);
+	serv();
+
+	/* just to be careful */
+	while(1);
+
+	while(1)
+	{
+		result = compass();
+		sonar = getSonar(0);
+
+		if(i>0) {
+			i--;
+			a -= 1;
+			a = a<105?105:a;
+			b -= 5;
+			b = b<40?40:b;
+			if(IR(0)<20) {
+				a = 120;
+				b += 5;
+				i=0;
+			}
+		} else {
+			a += 1;
+			a = a>135?135:a;
+			b += 5;
+			b = b>120?120:b;
+			if(sonar < 30) {
+				i=200;
+				a = 120;
+				b--;
+			}
+		}	
+
+		set_servo_position(0, a);
+		set_servo_position(1, b);
+		clear_screen();
+		print_string("a: ");
+		print_int(a);
+		print_string(" b: ");
+		print_int(b);
+		next_line();
+		print_string("s: ");
+		print_int(sonar);
+		delay_ms(20);
+	}
+}

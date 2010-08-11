@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="8"
+   name=""
+   committed-date="2007-01-18T09:02:38.947254Z"
+   url="https://svn.openslam.org/data/svn/gridslam/trunk/src/mapper"
+   last-author="stachnis"
+   kind="dir"
+   uuid="3dd8368c-1227-0410-bb3b-dd2a2bc7ccc9"
+   repos="https://svn.openslam.org/data/svn/gridslam"
+   revision="10"/>
+<entry
+   committed-rev="8"
+   name="run_file.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="0ac88d57e613a24b32021473a0823555"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:22.000000Z"/>
+<entry
+   committed-rev="8"
+   name="map2d.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="d68e567c33cbb0408ca6a36bd4a77fd0"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:22.000000Z"/>
+<entry
+   committed-rev="8"
+   name="write-map.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="999685f5fdf79b4d03c1cff0b53d4d1d"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:22.000000Z"/>
+<entry
+   committed-rev="8"
+   name="gui.ui.h"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="6e67506f660b9a847fb48d7a7b2728f4"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:22.000000Z"/>
+<entry
+   committed-rev="8"
+   name="match-map.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="7dd8e39941dd6037d61a3d5da9c71e8b"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:22.000000Z"/>
+<entry
+   committed-rev="8"
+   name="run_online.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="16646d3d599f4e6f0848a91107988331"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="map2d.h"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="8a674c5cdabac89876a144e105a2998e"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="mapview.cpp"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="75e3f4b1790ee8ad212e0261ac917d7a"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:22.000000Z"/>
+<entry
+   committed-rev="8"
+   name="global-map.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="f74f883ee90f64bc3ac01ba07c6c69fc"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="ipc.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="6abf9f6b6386a6a80e6224c9c6ec61fc"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="map.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="65c789563fbca2c99e6d4ad3ca5ee57b"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="mapview.h"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="aa129c6f18c9869d2656e94ca3986d45"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="gui.ui"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="39fa0b5680ab7e81a700e53baf600a19"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="2"
+   name="mapper_messages.h"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-15T11:39:08.687096Z"
+   checksum="058d7a818d771b6be281de43811f108d"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="main.cpp"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="1aa2c982d5bdd72fc71b65eb7c1e8a53"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="Makefile.rules"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="3d516f1725d23e1dc846f18a7b972c2a"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="line.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="304984a20254a8258d5f023c9d3a87db"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="read-ini.c"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="2fca6b9d5298a1ce4844773061e81d65"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="8"
+   name="Makefile"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="476742b4ed5d245d2669da99d252c429"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   committed-rev="2"
+   name="settings.ini"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-15T11:39:08.687096Z"
+   checksum="d5f5bdeb89078f2e375d1a331e30c511"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+</wc-entries>

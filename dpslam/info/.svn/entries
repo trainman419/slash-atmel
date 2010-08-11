@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="8"
+   name=""
+   committed-date="2007-01-16T16:39:46.198005Z"
+   url="https://svn.openslam.org/data/svn/dpslam/info"
+   last-author="stachnis"
+   kind="dir"
+   uuid="b4c0cc03-1327-0410-9661-ef90828d0f54"
+   repos="https://svn.openslam.org/data/svn/dpslam"
+   revision="8"/>
+<entry
+   committed-rev="8"
+   name="info.xml"
+   text-time="2008-05-27T13:13:12.000000Z"
+   committed-date="2007-01-16T16:39:46.198005Z"
+   checksum="15c1cb53caae4d711da4dec3d09e1d97"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:13:12.000000Z"/>
+</wc-entries>

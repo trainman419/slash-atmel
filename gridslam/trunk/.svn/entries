@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="8"
+   name=""
+   committed-date="2007-01-18T09:02:38.947254Z"
+   url="https://svn.openslam.org/data/svn/gridslam/trunk"
+   last-author="stachnis"
+   kind="dir"
+   uuid="3dd8368c-1227-0410-bb3b-dd2a2bc7ccc9"
+   repos="https://svn.openslam.org/data/svn/gridslam"
+   revision="10"/>
+<entry
+   name="src"
+   kind="dir"/>
+</wc-entries>

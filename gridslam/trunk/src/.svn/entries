@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="8"
+   name=""
+   committed-date="2007-01-18T09:02:38.947254Z"
+   url="https://svn.openslam.org/data/svn/gridslam/trunk/src"
+   last-author="stachnis"
+   kind="dir"
+   uuid="3dd8368c-1227-0410-bb3b-dd2a2bc7ccc9"
+   repos="https://svn.openslam.org/data/svn/gridslam"
+   revision="10"/>
+<entry
+   name="mapper"
+   kind="dir"/>
+<entry
+   committed-rev="8"
+   name="Makefile.rules"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="728918621a29f279da2d321302494b6b"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+<entry
+   name="fast-slam"
+   kind="dir"/>
+<entry
+   committed-rev="8"
+   name="Makefile"
+   text-time="2008-05-27T13:24:23.000000Z"
+   committed-date="2007-01-18T09:02:38.947254Z"
+   checksum="54531b7bc6681bba6636c8b1dcf23774"
+   last-author="stachnis"
+   kind="file"
+   prop-time="2008-05-27T13:24:23.000000Z"/>
+</wc-entries>
