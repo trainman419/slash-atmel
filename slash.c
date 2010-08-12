@@ -15,6 +15,14 @@
 #define BACKUP_SPEED 100
 #define BACKUP_SLOW 105
 
+/* TODO:
+ *
+ * compensate drive power based on wheel velocity
+ *
+ * build a power cutoff and write the battery to power down when our battery
+ *  gets too low
+ */
+
 /* sine table */
 static int sine[64] = {0,6,13,19,25,31,38,44,50,56,62,68,74,80,86,92,98,104,
 109,115,121,126,132,137,142,147,152,157,162,167,172,177,181,185,190,194,198,
@@ -49,7 +57,7 @@ void thread0() {
       bytes[1] = rx_byte();
       bytes[2] = rx_byte();
       steer = (s16)bytes[2] + 120;
-      set_servo_position(0,120); /* steering */
+      set_servo_position(0,120);   /* main drive */
       set_servo_position(1,steer); /* steering */
 
       led_on();
