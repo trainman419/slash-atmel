@@ -26,16 +26,16 @@ volatile u08 battery;
 
 u08 IR(u08 addr)
 {
-	u16 dist = analog(addr);
-	delay_ms(1);
-	dist += analog(addr);
-	delay_ms(1);
-	dist += analog(addr);
-	delay_ms(1);
-	dist += analog(addr);
-	dist /= 4;
-	dist = (2112 / (dist + 28)) - 5;
-	return dist;
+   u16 dist = analog(addr);
+   delay_ms(1);
+   dist += analog(addr);
+   delay_ms(1);
+   dist += analog(addr);
+   delay_ms(1);
+   dist += analog(addr);
+   dist /= 4;
+   dist = (2112 / (dist + 28)) - 5;
+   return dist;
 }
 
 /* first thread, if I need it */
@@ -49,8 +49,8 @@ void thread0() {
       bytes[1] = rx_byte();
       bytes[2] = rx_byte();
       steer = (s16)bytes[2] + 120;
-	   set_servo_position(0,120); /* steering */
-	   set_servo_position(1,steer); /* steering */
+      set_servo_position(0,120); /* steering */
+      set_servo_position(1,steer); /* steering */
 
       led_on();
       clear_screen();
@@ -70,31 +70,31 @@ void battery_thread() {
 
 int main(void)
 {
-	struct heading result;
-	u08 ir=0;
-	u08 i=0;
-	u08 a=120;
-	u08 b=120;
-	u08 backup=0;
-	u08 steer_inc=6;
-	u16 sonar;
+   struct heading result;
+   u08 ir=0;
+   u08 i=0;
+   u08 a=120;
+   u08 b=120;
+   u08 backup=0;
+   u08 steer_inc=6;
+   u16 sonar;
 
-	initialize();
-	servo_init();
-	compass_init();
+   initialize();
+   servo_init();
+   compass_init();
    serial_init();
 
-	set_servo_position(0,120); /* power */
-	set_servo_position(1,120); /* steering */
-	while(!get_sw1()) {
-		a = knob();
-		set_servo_position(0,a);
-		clear_screen();
-		print_string("Waiting");
-		next_line();
-		print_int(a);
-		delay_ms(40);
-	}
+   set_servo_position(0,120); /* power */
+   set_servo_position(1,120); /* steering */
+   while(!get_sw1()) {
+      a = knob();
+      set_servo_position(0,a);
+      clear_screen();
+      print_string("Waiting");
+      next_line();
+      print_int(a);
+      delay_ms(40);
+   }
 
    thread0();
 }
