@@ -71,9 +71,25 @@ void thread0() {
    }
 }
 
+/* extend the OS to run this on a schedule, maybe once per second */
 void battery_thread() {
    /* assume the task switcher is enabled */
-   battery = analog(0);
+   while(1) {
+      battery = analog(0);
+      yeild(); // done; yeild the processor so something else can use it
+   }
+}
+
+/* extend the OS to run this on a strict schedule */
+void wheelmon() {
+   while(1) {
+      /* read wheel sensors */
+
+      /* update computed wheel speed */
+
+      /* yeild the processor until we need to run again */
+      yeild();
+   }
 }
 
 int main(void)

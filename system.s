@@ -145,6 +145,7 @@ yeild:
    st Z+, r0
    st Z+, r1
    ; wheh, that's everything! ( I think :)
+
    lds r30, current_pid
    lds r31, num_pids
    inc r30
@@ -160,6 +161,7 @@ L2:
    ldi r31, hi8(process_table)
    add r30, r0
    adc r31, r1 ; Z now has address of next process to run
+
    ; load process (registers and return adress)
    ld r0, Z+
    ld r1, Z+
@@ -349,13 +351,13 @@ system_loop:
    rcall yeild
    rjmp system_loop
 
-	.section .bss
+   .section .bss
 ; global OS variables
 .global process_table
-	.type process_table, @object
-	.size process_table, 148 ; space for 4 processes @37 bytes each
+   .type process_table, @object
+   .size process_table, 148 ; space for 4 processes @37 bytes each
 process_table:
-	.skip 148,0 ; layout: r0-r31, SREG, RET, SP
+   .skip 148,0 ; layout: r0-r31, SREG, RET, SP
 .global current_pid
    .type current_pid, @object
    .size current_pid, 1
