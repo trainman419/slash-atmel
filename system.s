@@ -79,7 +79,8 @@
 .global yeild
 __vector_11: 
 yeild:
-   cli  ;disable interrupts
+;   cli  ;disable interrupts
+   sei  ; enable interrupts; we can afford to be interrupted here
    push r29
    push r30
    push r31
@@ -193,11 +194,15 @@ L2:
    ld r27, Z+
    ; that covers the first 28 registers
    ; this is where it gets tricky
+
+   cli ; disable interrupts before writing stack pointer
    adiw r30, 7 ; skip past r28-r31, SREG, return address
    ld r28, Z+  ; SPL from SRAM
    ld r29, Z+  ; SPH from SRAM
    out 0x3d, r28 ; SPL
    out 0x3e, r29 ; SPH
+   sei ; enable interrupts now that we're done writing the stack pointer
+
    sbiw r30, 4 ; skip back to return address
    ; put return address back on stack
    ; store was: pop r0, pop r1, st r0, st r1

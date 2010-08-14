@@ -59,7 +59,6 @@ void thread0() {
       bytes[1] = rx_byte();
       bytes[2] = rx_byte();
       speed = bytes[1]>30?30:bytes[1];
-      speed *= 2;
       speed = (s16)speed + 120;
       steer = (s16)bytes[2] + 120;
       set_servo_position(0,speed);   /* main drive */
@@ -113,6 +112,9 @@ int main(void)
    compass_init();
    serial_init();
 
+   system_init();
+   system(wheelmon);
+
    set_servo_position(0,120); /* power */
    set_servo_position(1,120); /* steering */
    while(!get_sw1()) {
@@ -124,6 +126,10 @@ int main(void)
       print_int(a);
       delay_ms(40);
    }
+
+   clear_screen();
+   print_string("Waiting data");
+
 
    thread0();
 }
