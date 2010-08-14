@@ -52,12 +52,17 @@ void thread0() {
    while(1) {
       /*bytes[0] = rx_byte();*/
       u08 steer;
+      u08 speed;
       bytes[0] = 0;
       while (rx_byte() != 0); /* next input byte */
+
       bytes[1] = rx_byte();
       bytes[2] = rx_byte();
+      speed = bytes[1]>30?30:bytes[1];
+      speed *= 2;
+      speed = (s16)speed + 120;
       steer = (s16)bytes[2] + 120;
-      set_servo_position(0,120);   /* main drive */
+      set_servo_position(0,speed);   /* main drive */
       set_servo_position(1,steer); /* steering */
 
       led_on();
