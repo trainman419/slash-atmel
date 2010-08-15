@@ -39,14 +39,14 @@
 ; store PC: 2 bytes
 ; store stack pointer: 2 bytes
 ; store SREG: 1 byte
-;  run frequency: 1 byte (every N cycles)
+;  run frequency: 1 byte (every N cycles, 0 for idle)
 ;  last run: 1 byte (N cycles ago)
 ;  priority: 1 byte (lower is better)
 ; some info about when to run again
 ;  function pointer?
 ;  priority?
 ; optional: PID, 1 byte
-;  TOTAL: 37 bytes
+;  TOTAL: 40 bytes
 
 #define P_SZ 40
 
@@ -153,16 +153,56 @@ yeild:
    st Z+, r1
    ; wheh, that's everything! ( I think :)
 
-   lds r30, current_pid
-   lds r31, num_pids
-   inc r30
-   cp r30, r31
-   brlt L2 ; test if next pid is less than num_pids
-   clr r30 ; 65 instructions up to here
+   ; SCHEDULER
+   ; old round-robin scheduler
+;   lds r30, current_pid
+;   lds r31, num_pids
+;   inc r30
+;   cp r30, r31
+;   brlt L2 ; test if next pid is less than num_pids
+;   clr r30 ; 65 instructions up to here
 L2:
+   ; new, priority scheduler
+;   next = 0;
+;   priority = 255;
+;   for( i=0; i<num_pids; i++ )
+;      if( s[i] <= l[i] )
+;         if( p[i] < priority ) {
+;            priority = p[i];
+;            next = i;
+;         }
+   lds r31, num_pids
+   ldi r30, P_SZ
+
+   ; load address of process_table into Y
+   ldi r29, hi8(process_table)
+   ldi r28, lo8(process_table)
+
+   ldi r16, 1 ; "1" register
+L3:
+   ; load s[i]
+   mul r30, r31 ; reslult into r1:r0
+   add r0, r28
+   adc r1, r29
+   mov r0, r26
+   mov r1, r27
+   ; X now has process base
+   adiw r26, 37 ; skip past process info
+   ld r23, X+ ; schedule
+   ld r24, X+ ; last run
+   ld r25, X+ ; priority
+
+   cp r23, r24 ; do r23 - r24, set SREG
+
+L4:
+   sub r31, r16
+   breq L3 ; loop if r31 != 0
    ; r30 is now next PID to run
+   ; END OF SCHEDULER
+
    sts current_pid, r30 ; save to SRAM
-   ldi r31, 37 
+;   ldi r31, 37 
+   ldi r31, P_SZ
    mul r30, r31
    ldi r30, lo8(process_table)
    ldi r31, hi8(process_table)
@@ -309,7 +349,8 @@ system:
    brge system_end ; return with error if we are running too many
 
    clr r26
-   ori r26, 37
+#   ori r26, 37
+   ori r26, P_SZ
    mul r26, r27
    clr r26
    clr r27
@@ -384,9 +425,11 @@ system_loop:
 ; global OS variables
 .global process_table
    .type process_table, @object
-   .size process_table, 148 ; space for 4 processes @37 bytes each
+;   .size process_table, 148 ; space for 4 processes @P_SZ bytes each
+   .size process_table, P_SZ*4 ; space for 4 processes @P_SZ bytes each
 process_table:
-   .skip 148,0 ; layout: r0-r31, SREG, RET, SP
+;   .skip 148,0 ; layout: r0-r31, SREG, RET, SP
+   .skip P_SZ*4,0 ; layout: r0-r31, SREG, RET, SP
 .global current_pid
    .type current_pid, @object
    .size current_pid, 1
