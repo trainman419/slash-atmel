@@ -178,6 +178,8 @@ L2:
    ldi r29, hi8(process_table)
    ldi r28, lo8(process_table)
 
+   ser r18   ; priority
+   clr r17   ; next
    ldi r16, 1 ; "1" register
 L3:
    ; load s[i]
@@ -192,7 +194,13 @@ L3:
    ld r24, X+ ; last run
    ld r25, X+ ; priority
 
-   cp r23, r24 ; do r23 - r24, set SREG
+   cp r24, r23 ; do r24 - r23, set SREG
+   brlo L4 ; r24 < r23
+   cp r25, r18 ; do r25 - r18
+   brsh L4 ; r25 >= r18
+   
+   ; actually do stuff here!
+
 
 L4:
    sub r31, r16
