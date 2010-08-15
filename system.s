@@ -39,11 +39,16 @@
 ; store PC: 2 bytes
 ; store stack pointer: 2 bytes
 ; store SREG: 1 byte
+;  run frequency: 1 byte (every N cycles)
+;  last run: 1 byte (N cycles ago)
+;  priority: 1 byte (lower is better)
 ; some info about when to run again
 ;  function pointer?
 ;  priority?
 ; optional: PID, 1 byte
 ;  TOTAL: 37 bytes
+
+#define P_SZ 40
 
 ;total space allocated per-process: 98 bytes
 ; not bad!
@@ -89,7 +94,8 @@ yeild:
    ; grab SREG before we change it
    in r29, 0x3f ; SREG
    lds r31, current_pid
-   ldi r30, 37 ; size of process info structure
+;   ldi r30, 37 ; size of process info structure
+   ldi r30, P_SZ ; size of process info structure
    mul r31, r30
    ldi r30, lo8(process_table)
    ldi r31, hi8(process_table)
@@ -152,7 +158,7 @@ yeild:
    inc r30
    cp r30, r31
    brlt L2 ; test if next pid is less than num_pids
-   clr r30
+   clr r30 ; 65 instructions up to here
 L2:
    ; r30 is now next PID to run
    sts current_pid, r30 ; save to SRAM
@@ -228,6 +234,8 @@ L2:
    pop r30
    pop r31
    reti ; return and enable interrupts
+   ; 124 instructions if I've counted properly
+   ; approximately 8uS; round up to 20uS
 
 .global system_init
 system_init:
@@ -246,14 +254,30 @@ system_init:
    ;   select normal timer mode (set TCCR0 bits 6,3 to 00)
    ;   disable force-output-compare (set TCCR0 bit 7 to 0)
    ;  summary: set TCCR0 to 00000101b
+   ;
+   ;  1024 * 256 = 262144 divisor
+   ;  processor clock: 16MHz
+   ; Final timer frequency: 61.035 Hz
+   ; target frequency: 1000Hz (1mS)
+   ;  need divisor: 16000
+   ;  available prescalers: 1, 8, 64, 256, 1024
+   ;  scale by: 256 * 64 ( prescaler 011 )
+   ; Final timer frequency of 976 Hz
+   ;   1.024mS per interrupt
+   ;    overhead of ~128 instructions per interrupt
+   ;     0.8% overhead; not bad!
+   ;     at least 1.6% if have a yeild call mid-quanta
+   ;   could be perfect if we interrupt at 250 instead of 256
+   ;    might want to cut this to 125 (2000Hz) for better timing control
+   ;  summary: set TCCR0 to 00000011b
    cli ; disable interrupts for a little bit
    clr r30
-   ori r30, 0b00000101
-   out 0x33, r30
-   in r30, 0x39
+   ori r30, 0b00000011
+   out 0x33, r30 ; TCCR0
+   in r30, 0x39 ; TIMSK
    ori r30, 0b00000001  ; set bit 0
    andi r30, 0b11111101 ; clear bit 1
-   out 0x39, r30
+   out 0x39, r30 ; TIMSK
    sei ; don't forget to enable interrupts!
    ret
 
