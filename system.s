@@ -165,12 +165,16 @@ L2:
    ; new, priority scheduler
 ;   next = 0;
 ;   priority = 255;
-;   for( i=0; i<num_pids; i++ )
+;   for( i=0; i<num_pids; i++ ) {
+;      l[i]++;
 ;      if( s[i] <= l[i] )
 ;         if( p[i] < priority ) {
 ;            priority = p[i];
 ;            next = i;
 ;         }
+;   }
+;   l[next] = 0;
+;  
    lds r31, num_pids
    ldi r30, P_SZ
 
@@ -191,7 +195,11 @@ L3:
    ; X now has process base
    adiw r26, 37 ; skip past process info
    ld r23, X+ ; schedule
-   ld r24, X+ ; last run
+   ld r24, X ; last run
+   ; branch/skip L5 if not interrupt
+   adiw r24, 1
+L5:
+   st X, r24
    ld r25, X+ ; priority
 
    cp r24, r23 ; do r24 - r23, set SREG
@@ -200,6 +208,8 @@ L3:
    brsh L4 ; r25 >= r18
    
    ; actually do stuff here!
+   mov r18, r25
+   mov r17, r31
 
 
 L4:

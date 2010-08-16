@@ -11,3 +11,15 @@ void system_init(void);
 void yeild(void);
 
 extern char current_pid;
+
+struct pid_entry {
+   unsigned char r[32];
+   unsigned char sreg;
+   unsigned char spl;
+   unsigned char sph;
+   unsigned char schedule;
+   unsigned char priority;
+   unsigned char last;
+};
+
+extern struct pid_entry process_table[4];
