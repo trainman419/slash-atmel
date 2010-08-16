@@ -1,6 +1,6 @@
 # enter the name of your program here
 TRG = slash
-ASM = compass.s system.s
+ASM = compass.s system.S
 
 # enter the COM port of your USB downloader here
 PORT = com3
