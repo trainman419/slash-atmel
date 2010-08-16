@@ -83,6 +83,34 @@
 .global __vector_11
 .global yeild
 __vector_11: 
+   push r31
+   push r30
+   push r29
+   ldi r31, hi8(process_table+38)
+   ldi r30, lo8(process_table+38)
+
+   ld r29, Z
+   inc r29
+   st Z, r29
+
+   adiw r30, P_SZ
+   ld r29, Z
+   inc r29
+   st Z, r29
+
+   adiw r30, P_SZ
+   ld r29, Z
+   inc r29
+   st Z, r29
+
+   adiw r30, P_SZ
+   ld r29, Z
+   inc r29
+   st Z, r29
+   pop r29
+   pop r30
+   pop r31
+
 yeild:
 ;   cli  ;disable interrupts
    sei  ; enable interrupts; we can afford to be interrupted here
@@ -166,7 +194,6 @@ L2:
 ;   next = 0;
 ;   priority = 255;
 ;   for( i=0; i<num_pids; i++ ) {
-;      l[i]++;
 ;      if( s[i] <= l[i] )
 ;         if( p[i] < priority ) {
 ;            priority = p[i];
@@ -184,22 +211,17 @@ L2:
 
    ser r18   ; priority
    clr r17   ; next
-   ldi r16, 1 ; "1" register
 L3:
    ; load s[i]
    mul r30, r31 ; reslult into r1:r0
    add r0, r28
    adc r1, r29
-   mov r0, r26
-   mov r1, r27
+   mov r26, r0
+   mov r27, r1
    ; X now has process base
    adiw r26, 37 ; skip past process info
    ld r23, X+ ; schedule
-   ld r24, X ; last run
-   ; branch/skip L5 if not interrupt
-   adiw r24, 1
-L5:
-   st X, r24
+   ld r24, X+ ; last run
    ld r25, X+ ; priority
 
    cp r24, r23 ; do r24 - r23, set SREG
@@ -213,8 +235,20 @@ L5:
 
 
 L4:
-   sub r31, r16
+   dec r31
    breq L3 ; loop if r31 != 0
+
+   ; next pid is r17
+   mul r17, r30
+   add r0, r28
+   adc r1, r29
+   mov r31, r1
+   mov r30, r0
+   adiw r30, 38 ; offset for last run
+   clr r0
+   st Z, r0 ; store 0 at last run-time
+
+   mov r17, r30
    ; r30 is now next PID to run
    ; END OF SCHEDULER
 
