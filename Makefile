@@ -1,6 +1,6 @@
 # enter the name of your program here
 TRG = slash
-ASM = compass.s system.s
+ASM = compass.s system.S
 
 # enter the COM port of your USB downloader here
 PORT = com3
@@ -26,7 +26,8 @@ program:
 download: program
 
 #Linux command
-	avrdude -pm32 -P/dev/ttyUSB0 -cbutterfly -b57600 -u -U flash:w:$(TRG).hex
+#	avrdude -pm32 -P/dev/ttyUSB0 -cbutterfly -b57600 -u -U flash:w:$(TRG).hex
+	avrdude -pm32 -P/dev/tty.usbserial-A30008vu -cbutterfly -b57600 -u -U flash:w:$(TRG).hex
 
 #Windows command
 #	avrdude -pm32 -P$(PORT) -cbutterfly -b57600 -u -U flash:w:$(TRG).hex
