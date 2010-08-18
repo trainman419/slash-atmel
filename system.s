@@ -339,7 +339,7 @@ system_init:
    sei ; don't forget to enable interrupts!
    ret
 
-.global system ; u08 system( void (*task)(void) );
+.global system ; u08 system( void (*task)(void), u08 sched, u08 pri );
 ; take a function pointer and run it as a new task, assuming there is a free
 ;  spot in the pid table
 ; if it returns, it should jump to a cleanup function
@@ -349,6 +349,10 @@ system_init:
 system:
    mov r30, r24 ; low byte of function pointer
    mov r31, r25 ; high byte of function pointer
+
+   ; sched in r22
+   ; pri in r20
+
    ; function pointer now in Z (I think)
    ; DEBUG
    ;icall

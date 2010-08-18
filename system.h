@@ -4,7 +4,7 @@
  * defines system(), system_init() and yeild() functions
  */
 
-char system( void (*)(void) );
+char system( void (*)(void), unsigned char sched, unsigned char pri);
 
 void system_init(void);
 
