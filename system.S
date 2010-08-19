@@ -392,8 +392,8 @@ system:
    ;icall
    ; END DEBUG
 
-   clr r24    ; return value
-   ori r24, 1 ; set error value (makes ruturning easy)
+   ; r24: return value
+   ldi r24, 1 ; set error value (makes ruturning easy)
    ; SUMMARY:
    ; we need to zero the register entries in the process table, set the 
    ; stack pointer, set the SREG, and set the return address
@@ -404,14 +404,10 @@ system:
    cpi r27, 4      ; check that we're not running too many processes
    brge system_end ; return with error if we are running too many
 
-   clr r26
-#   ori r26, 37
-   ori r26, P_SZ
+   ldi r26, P_SZ
    mul r26, r27
-   clr r26
-   clr r27
-   ori r26, lo8(process_table)
-   ori r27, hi8(process_table)
+   ldi r26, lo8(process_table)
+   ldi r27, hi8(process_table)
    add r26, r0
    adc r27, r1 ; now address into process_table is in X
    clr r1 ; reset gcc's zero register
@@ -422,8 +418,7 @@ L1:
    dec r25
    brne L1
    ; set SREG
-   clr r25
-   ori r25, 0b10000000 ; only I (interrupts) enabled
+   ldi r25, 0b10000000 ; only I (interrupts) enabled
    st X+, r25
    ; set return address
    ; apparently, return address is push low-byte first onto the stack
@@ -458,6 +453,9 @@ L1:
    st X+, r31 ; high byte second
    ; I realize that this makes no sense. at this point, I don't care, as long
    ; as I can keep them straight
+   st X+, r22 ; schedule
+   st X+, r0  ; last run (0)
+   st X+, r20 ; priority
 
    ; increment number of running processes (if we get an interrupt here, we're
    ;  ok!)

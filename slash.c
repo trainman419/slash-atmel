@@ -31,6 +31,8 @@ static int sine[64] = {0,6,13,19,25,31,38,44,50,56,62,68,74,80,86,92,98,104,
 };
 
 volatile u08 battery;
+volatile s16 lspeed; /* left wheel speed (Hz) */
+volatile s16 rspeed; /* right wheel speed (Hz) */
 
 u08 IR(u08 addr)
 {
@@ -80,16 +82,32 @@ void battery_thread() {
    /* assume the task switcher is enabled */
    while(1) {
       battery = analog(0);
-      yeild(); // done; yeild the processor so something else can use it
+      yeild(); /* done; yeild the processor so something else can use it */
    }
 }
 
 /* extend the OS to run this on a strict schedule */
 void wheelmon() {
+   u16 lcnt = 0;
+   u16 rcnt = 0;
    while(1) {
-      /* read wheel sensors */
+      /* read wheel sensors and update computed wheel speed */
+      /* don't know if this is left or right. I'll just guess. */
+      /* TODO: check this and make sure it's right */
+      if( digital(0) ) {
+         lcnt++;
+      } else {
+         lspeed = 1000/lcnt;
+         lcnt = 0;
+      }
+      if( digital(1) ) {
+         rcnt++;
+      } else {
+         rspeed = 1000/rcnt;
+         rcnt = 0;
+      }
 
-      /* update computed wheel speed */
+      /* as written now, this should take maybe 10uS to execute. */
 
       /* yeild the processor until we need to run again */
       yeild();
@@ -113,7 +131,7 @@ int main(void)
    serial_init();
 
    system_init();
-   system(wheelmon);
+   system(wheelmon, 1, 0); /* once per mS, highest priority */
 
    set_servo_position(0,120); /* power */
    set_servo_position(1,120); /* steering */
@@ -121,7 +139,10 @@ int main(void)
       a = knob();
       set_servo_position(0,a);
       clear_screen();
-      print_string("Waiting");
+      print_string("Waiting ");
+      print_int(lspeed);
+      print_string(" ");
+      print_int(rspeed);
       next_line();
       print_int(a);
       delay_ms(40);

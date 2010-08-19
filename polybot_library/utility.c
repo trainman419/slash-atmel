@@ -43,9 +43,9 @@ u08 digital(u08 num) {
   cli(); // disable interrupts
   DDRC = 0;
   cbi(PORTD,4); //enable digital input latch
-  _delay_loop_1(1);
+  _delay_loop_1(1); // delay roughly 1uS
   value = PINC;
-  _delay_loop_1(1);
+  _delay_loop_1(1); // delay roughly 1uS
   sbi(PORTD,4); //disable digital input latch
   sei(); // enable interrupts
 
