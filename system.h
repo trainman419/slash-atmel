@@ -22,4 +22,8 @@ struct pid_entry {
    unsigned char last;
 };
 
+void schedule(unsigned char sched);
+
+void priority(unsigned char pri);
+
 extern struct pid_entry process_table[4];

@@ -94,9 +94,11 @@ void wheelmon() {
       /* read wheel sensors and update computed wheel speed */
       /* don't know if this is left or right. I'll just guess. */
       /* TODO: check this and make sure it's right */
-      if( digital(0) ) {
+      /*if( digital(0) ) {
+         led_on();
          lcnt++;
       } else {
+         led_off();
          lspeed = 1000/lcnt;
          lcnt = 0;
       }
@@ -105,7 +107,7 @@ void wheelmon() {
       } else {
          rspeed = 1000/rcnt;
          rcnt = 0;
-      }
+      }*/
 
       /* as written now, this should take maybe 10uS to execute. */
 
@@ -125,16 +127,23 @@ int main(void)
    u08 steer_inc=6;
    u16 sonar;
 
+   lspeed = 0;
+   rspeed = 0;
+
    initialize();
    servo_init();
    compass_init();
    serial_init();
 
+   schedule(0);
+   priority(255);
    system_init();
    system(wheelmon, 1, 0); /* once per mS, highest priority */
+   
 
    set_servo_position(0,120); /* power */
    set_servo_position(1,120); /* steering */
+   delay_ms(40); /* wait for switch to stabilize? */
    while(!get_sw1()) {
       a = knob();
       set_servo_position(0,a);
@@ -145,6 +154,11 @@ int main(void)
       print_int(rspeed);
       next_line();
       print_int(a);
+      if( get_sw1() ) {
+         print_string(" +");
+      } else {
+         print_string(" -");
+      }
       delay_ms(40);
    }
 

@@ -83,6 +83,8 @@
 .global __vector_11
 .global yeild
 __vector_11: 
+   sbi 0x1a, 4
+   sbi 0x1b, 4
    push r31
    push r30
    push r29
@@ -98,20 +100,22 @@ __vector_11:
    inc r29
    st Z, r29
 
-   adiw r30, P_SZ
-   ld r29, Z
-   inc r29
-   st Z, r29
+;   adiw r30, P_SZ
+;   ld r29, Z
+;   inc r29
+;   st Z, r29
 
-   adiw r30, P_SZ
-   ld r29, Z
-   inc r29
-   st Z, r29
+;   adiw r30, P_SZ
+;   ld r29, Z
+;   inc r29
+;   st Z, r29
    pop r29
    pop r30
    pop r31
 
 yeild:
+   sbi 0x1a, 4
+   sbi 0x1b, 4
 ;   cli  ;disable interrupts
    sei  ; enable interrupts; we can afford to be interrupted here
    push r29
@@ -212,8 +216,10 @@ L2:
    ser r18   ; priority
    clr r17   ; next
 L3:
+   mov r27, r31
+   dec r27
    ; load s[i]
-   mul r30, r31 ; reslult into r1:r0
+   mul r30, r27 ; reslult into r1:r0
    add r0, r28
    adc r1, r29
    mov r26, r0
@@ -235,25 +241,53 @@ L3:
 
 
 L4:
+   mov r27, r31
+L7:
+   cbi 0x1b, 4
+   sbi 0x1b, 4
+   dec r27
+   brne L7
+
    dec r31
-   breq L3 ; loop if r31 != 0
+   brne L3 ; loop if r31 != 0
 
    ; next pid is r17
-   mul r17, r30
-   add r0, r28
-   adc r1, r29
-   mov r31, r1
-   mov r30, r0
-   adiw r30, 38 ; offset for last run
-   clr r0
-   st Z, r0 ; store 0 at last run-time
+;   mul r17, r30
+;   add r0, r28
+;   adc r1, r29
+;   mov r31, r1
+;   mov r30, r0
+;   adiw r30, 38 ; offset for last run
+;   clr r0
+;   st Z, r0 ; store 0 at last run-time
 
-   mov r17, r30
+   mov r30, r17
+;   ldi r30, 0
    ; r30 is now next PID to run
    ; END OF SCHEDULER
 
+   ; busy wait for a while
+   ldi r31, 20
+L6:
+   dec r31
+   brne L6
+
+   ; flash the LED 1+PID times (really fast!)
+   mov r31, r30
+   inc r31
+   sbi 0x1a, 4
+L5:
+   cbi 0x1b, 4
+   nop
+   nop
+   sbi 0x1b, 4
+   dec r31
+   brne L5
+
+   ; load pid 0, regardless of scheduler decision :(
+   ldi r30, 0
+
    sts current_pid, r30 ; save to SRAM
-;   ldi r31, 37 
    ldi r31, P_SZ
    mul r30, r31
    ldi r30, lo8(process_table)
@@ -325,6 +359,8 @@ L4:
    ; pop r30 and r31
    pop r30
    pop r31
+   sbi 0x1a, 4
+   cbi 0x1b, 4
    reti ; return and enable interrupts
    ; 124 instructions if I've counted properly
    ; approximately 8uS; round up to 20uS
@@ -334,7 +370,7 @@ system_init:
    ; for now, I think I only need to initialize the globals, and set up timer
    clr r30
    sts current_pid, r30
-   ori r30, 1
+   ldi r30, 1
    sts num_pids, r30
    ; timing done by overflow timer of timer0
    ; to enable:
@@ -470,6 +506,34 @@ system_end:
    clr r1 ; a litle cleanup
    ret
 
+; void schedule(unsigned char sched);
+.global schedule
+schedule:
+   lds r31, current_pid
+   ldi r30, P_SZ
+   mul r30, r31
+   ldi r30, lo8(process_table)
+   ldi r31, hi8(process_table)
+   add r30, r0
+   adc r31, r1
+   adiw r30, 37 ; offset to schedule
+   st Z, r24 ; parameter in r24
+   ret
+
+; void priority(unsigned char pri)
+.global priority
+priority:
+   lds r31, current_pid
+   ldi r30, P_SZ
+   mul r30, r31
+   ldi r30, lo8(process_table)
+   ldi r31, hi8(process_table)
+   add r30, r0
+   adc r31, r1
+   adiw r30, 39 ; offset to schedule
+   st Z, r24
+   ret
+
 ; placeholder for system cleanup routine
 system_loop:
    rcall yeild
@@ -480,10 +544,12 @@ system_loop:
 .global process_table
    .type process_table, @object
 ;   .size process_table, 148 ; space for 4 processes @P_SZ bytes each
-   .size process_table, P_SZ*4 ; space for 4 processes @P_SZ bytes each
+;   .size process_table, P_SZ*4 ; space for 4 processes @P_SZ bytes each
+   .size process_table, 160 ; space for 4 processes @P_SZ bytes each
 process_table:
 ;   .skip 148,0 ; layout: r0-r31, SREG, RET, SP
-   .skip P_SZ*4,0 ; layout: r0-r31, SREG, RET, SP
+;   .skip P_SZ*4,0 ; layout: r0-r31, SREG, RET, SP
+   .skip 160,0 ; layout: r0-r31, SREG, RET, SP
 .global current_pid
    .type current_pid, @object
    .size current_pid, 1
