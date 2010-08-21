@@ -1,6 +1,6 @@
 # 1 "slash.c"
 # 1 "<built-in>"
-# 1 "<command line>"
+# 1 "<command-line>"
 # 1 "slash.c"
 
 
@@ -21,38 +21,88 @@ typedef signed int s16;
 
 
 
-char system( void (*)(void) );
+char system( void (*)(void), unsigned char sched, unsigned char pri);
 
 void system_init(void);
 
 void yeild(void);
 
 extern char current_pid;
+
+struct pid_entry {
+   unsigned char r[32];
+   unsigned char sreg;
+   unsigned char spl;
+   unsigned char sph;
+   unsigned char schedule;
+   unsigned char priority;
+   unsigned char last;
+};
+
+void schedule(unsigned char sched);
+
+void priority(unsigned char pri);
+
+extern struct pid_entry process_table[4];
 # 8 "slash.c" 2
-# 1 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 1 3
-# 86 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 3
-# 1 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/sfr_defs.h" 1 3
-# 123 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/sfr_defs.h" 3
-# 1 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/inttypes.h" 1 3
-# 37 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/inttypes.h" 3
-# 1 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/stdint.h" 1 3
-# 116 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/stdint.h" 3
+# 1 "serial.h" 1
+# 9 "serial.h"
+void serial_init();
+
+
+void serial_stop();
+
+
+void tx_byte(u08 b);
+
+
+u08 tx_ready(void);
+
+
+u08 rx_ready(void);
+
+
+u08 rx_byte(void);
+# 9 "slash.c" 2
+# 1 "compass.h" 1
+# 9 "compass.h"
+struct heading
+{
+ int x;
+ int y;
+};
+
+
+struct heading compass();
+
+
+void compass_init();
+# 10 "slash.c" 2
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 1 3
+# 99 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 3
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/sfr_defs.h" 1 3
+# 126 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/sfr_defs.h" 3
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/inttypes.h" 1 3
+# 37 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/inttypes.h" 3
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/stdint.h" 1 3
+# 121 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/stdint.h" 3
 typedef int int8_t __attribute__((__mode__(__QI__)));
 typedef unsigned int uint8_t __attribute__((__mode__(__QI__)));
 typedef int int16_t __attribute__ ((__mode__ (__HI__)));
 typedef unsigned int uint16_t __attribute__ ((__mode__ (__HI__)));
 typedef int int32_t __attribute__ ((__mode__ (__SI__)));
 typedef unsigned int uint32_t __attribute__ ((__mode__ (__SI__)));
+
 typedef int int64_t __attribute__((__mode__(__DI__)));
 typedef unsigned int uint64_t __attribute__((__mode__(__DI__)));
-# 135 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/stdint.h" 3
+# 142 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/stdint.h" 3
 typedef int16_t intptr_t;
 
 
 
 
 typedef uint16_t uintptr_t;
-# 152 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/stdint.h" 3
+# 159 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/stdint.h" 3
 typedef int8_t int_least8_t;
 
 
@@ -83,13 +133,18 @@ typedef uint32_t uint_least32_t;
 
 
 
+
+
+
 typedef int64_t int_least64_t;
 
 
 
 
+
+
 typedef uint64_t uint_least64_t;
-# 200 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/stdint.h" 3
+# 213 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/stdint.h" 3
 typedef int8_t int_fast8_t;
 
 
@@ -120,274 +175,182 @@ typedef uint32_t uint_fast32_t;
 
 
 
+
+
+
 typedef int64_t int_fast64_t;
 
 
 
 
+
+
 typedef uint64_t uint_fast64_t;
-# 249 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/stdint.h" 3
+# 273 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/stdint.h" 3
 typedef int64_t intmax_t;
 
 
 
 
 typedef uint64_t uintmax_t;
-# 38 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/inttypes.h" 2 3
-# 76 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/inttypes.h" 3
+# 38 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/inttypes.h" 2 3
+# 77 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/inttypes.h" 3
 typedef int32_t int_farptr_t;
 
 
 
 typedef uint32_t uint_farptr_t;
-# 124 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/sfr_defs.h" 2 3
-# 87 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 2 3
-# 224 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 3
-# 1 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/iom32.h" 1 3
-# 225 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 2 3
-# 328 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 3
-# 1 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/portpins.h" 1 3
-# 329 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 2 3
-# 338 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 3
-# 1 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/version.h" 1 3
-# 339 "/usr/lib/gcc/avr/4.1.2/../../../../avr/include/avr/io.h" 2 3
-# 9 "slash.c" 2
+# 127 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/sfr_defs.h" 2 3
+# 100 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 2 3
+# 206 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 3
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/iom32.h" 1 3
+# 207 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 2 3
+# 408 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 3
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/portpins.h" 1 3
+# 409 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 2 3
+
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/common.h" 1 3
+# 411 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 2 3
+
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/version.h" 1 3
+# 413 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 2 3
 
 
-
-
-struct heading
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/fuse.h" 1 3
+# 248 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/fuse.h" 3
+typedef struct
 {
- int x;
- int y;
-};
+    unsigned char low;
+    unsigned char high;
+} __fuse_t;
+# 416 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 2 3
 
 
-struct heading compass();
-
-
-void compass_init();
-
-
+# 1 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/lock.h" 1 3
+# 419 "/usr/lib/gcc/avr/4.3.5/../../../avr/include/avr/io.h" 2 3
+# 11 "slash.c" 2
+# 27 "slash.c"
 static int sine[64] = {0,6,13,19,25,31,38,44,50,56,62,68,74,80,86,92,98,104,
 109,115,121,126,132,137,142,147,152,157,162,167,172,177,181,185,190,194,198,
 202,206,209,213,216,220,223,226,229,231,234,237,239,241,243,245,247,248,250,
 251,252,253,254,255,255,256,256
 };
 
-
-u16 getSonar(u08 addr)
-{
- while(!((*(volatile uint8_t *)((0x0B) + 0x20)) & (1<<5)) )
- {
-  ;
- }
- (*(volatile uint8_t *)((0x0C) + 0x20)) = addr;
- while(!((*(volatile uint8_t *)((0x0B) + 0x20)) & (1<<5)) )
- {
-  ;
- }
- (*(volatile uint8_t *)((0x0C) + 0x20)) = 84;
-
- u08 low, high;
- u16 result;
- while(!((*(volatile uint8_t *)((0x0B) + 0x20)) & (1<<7)) )
- {
-  ;
- }
- high = (*(volatile uint8_t *)((0x0C) + 0x20));
- while(!((*(volatile uint8_t *)((0x0B) + 0x20)) & (1<<7)) )
- {
-  ;
- }
- low = (*(volatile uint8_t *)((0x0C) + 0x20));
- result = high;
- result = result << 8;
- result |= low;
- return result;
-}
-
-
-void sonar_init() {
-
- (*(volatile uint8_t *)((0x0A) + 0x20)) = 0x18;
- (*(volatile uint8_t *)((0x20) + 0x20)) = 0x8E;
- (*(volatile uint8_t *)((0x20) + 0x20)) = 0x00;
- (*(volatile uint8_t *)((0x09) + 0x20)) = 0x67;
-}
+volatile u08 battery;
+volatile s16 lspeed;
+volatile s16 rspeed;
 
 u08 IR(u08 addr)
 {
- u16 dist = analog(addr);
- delay_ms(1);
- dist += analog(addr);
- delay_ms(1);
- dist += analog(addr);
- delay_ms(1);
- dist += analog(addr);
- dist /= 4;
- dist = (2112 / (dist + 28)) - 5;
- return dist;
+   u16 dist = analog(addr);
+   delay_ms(1);
+   dist += analog(addr);
+   delay_ms(1);
+   dist += analog(addr);
+   delay_ms(1);
+   dist += analog(addr);
+   dist /= 4;
+   dist = (2112 / (dist + 28)) - 5;
+   return dist;
 }
 
-u16 distance(u08 addr)
-{
- u16 ir =0;
- u16 sonar = getSonar(addr);
- ir = IR(addr);
 
- if (ir < 25)
- {
+void thread0() {
+   u08 bytes[3];
+   while(1) {
 
-  if(ir > 7 && sonar > 50)
-  {
-   return 0;
-  }
-  else
-  {
-   return ir;
-  }
- }
- else
- {
-  return sonar;
- }
-}
+      u08 steer;
+      u08 speed;
+      bytes[0] = 0;
+      while (rx_byte() != 0);
 
-void serv()
-{
-   u08 pos=0;
-   while(1)
-   {
-      set_servo_position(current_pid+2, pos);
-      pos = pos>=250?0:pos+1;
-      delay_ms(current_pid+2);
+      bytes[1] = rx_byte();
+      bytes[2] = rx_byte();
+      speed = bytes[1]>30?30:bytes[1];
+      speed = (s16)speed + 120;
+      steer = (s16)bytes[2] + 120;
+      set_servo_position(0,speed);
+      set_servo_position(1,steer);
+
+      led_on();
+      clear_screen();
+      print_int(bytes[0]);
+      print_string(" ");
+      print_int(bytes[1]);
+      print_string(" ");
+      print_int((s08)bytes[2]);
+      led_off();
    }
 }
 
-void serv2()
-{
-   u08 pos=0;
-   while(1)
-   {
-      set_servo_position(2, pos);
-      pos = pos>=250?0:pos+1;
-      delay_ms(1);
+
+void battery_thread() {
+
+   while(1) {
+      battery = analog(0);
+      yeild();
    }
 }
 
-void serv3()
-{
-   u08 pos=0;
-   while(1)
-   {
-      set_servo_position(3, pos);
-      pos = pos>=250?0:pos+1;
-      delay_ms(2);
-   }
-}
 
-void serv4()
-{
-   u08 pos=0;
-   while(1)
-   {
-      set_servo_position(4, pos);
-      pos = pos>=250?0:pos+1;
-      delay_ms(3);
-   }
-}
-
-void serv5()
-{
-   u08 pos=0;
-   while(1)
-   {
-      set_servo_position(5, pos);
-      pos = pos>=250?0:pos+1;
-      delay_ms(4);
+void wheelmon() {
+   u16 lcnt = 0;
+   u16 rcnt = 0;
+   while(1) {
+# 115 "slash.c"
+      yeild();
    }
 }
 
 int main(void)
 {
- struct heading result;
- u08 ir=0;
- u08 i=0;
- u08 a=120;
- u08 b=120;
- u16 sonar;
+   struct heading result;
+   u08 ir=0;
+   u08 i=0;
+   u08 a=120;
+   u08 b=120;
+   u08 backup=0;
+   u08 steer_inc=6;
+   u16 sonar;
 
- initialize();
+   lspeed = 0;
+   rspeed = 0;
 
- servo_init();
+   initialize();
+   servo_init();
+   compass_init();
+   serial_init();
 
-
- compass_init();
-
- set_servo_position(0,120);
- set_servo_position(1,120);
- set_servo_position(2,120);
- set_servo_position(3,120);
- set_servo_position(4,120);
- set_servo_position(5,120);
- while(!get_sw1()) {
-  a = knob();
-  set_servo_position(0,a);
-  clear_screen();
-  print_string("Waiting");
-  next_line();
-  print_int(a);
-  delay_ms(40);
- }
-
- system_init();
- system(serv);
- system(serv);
- system(serv);
- serv();
+   schedule(0);
+   priority(255);
+   system_init();
+   system(wheelmon, 1, 0);
 
 
- while(1);
-
- while(1)
- {
-  result = compass();
-  sonar = getSonar(0);
-
-  if(i>0) {
-   i--;
-   a -= 1;
-   a = a<105?105:a;
-   b -= 5;
-   b = b<40?40:b;
-   if(IR(0)<20) {
-    a = 120;
-    b += 5;
-    i=0;
+   set_servo_position(0,120);
+   set_servo_position(1,120);
+   delay_ms(40);
+   while(!get_sw1()) {
+      a = knob();
+      set_servo_position(0,a);
+      clear_screen();
+      print_string("Waiting ");
+      print_int(lspeed);
+      print_string(" ");
+      print_int(rspeed);
+      next_line();
+      print_int(a);
+      if( get_sw1() ) {
+         print_string(" +");
+      } else {
+         print_string(" -");
+      }
+      delay_ms(40);
    }
-  } else {
-   a += 1;
-   a = a>135?135:a;
-   b += 5;
-   b = b>120?120:b;
-   if(sonar < 30) {
-    i=200;
-    a = 120;
-    b--;
-   }
-  }
 
-  set_servo_position(0, a);
-  set_servo_position(1, b);
-  clear_screen();
-  print_string("a: ");
-  print_int(a);
-  print_string(" b: ");
-  print_int(b);
-  next_line();
-  print_string("s: ");
-  print_int(sonar);
-  delay_ms(20);
- }
+   clear_screen();
+   print_string("Waiting data");
+
+
+   thread0();
 }

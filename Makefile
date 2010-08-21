@@ -18,7 +18,7 @@ all: download
 # this target only compiles the program into .elf and .hex files
 program:
 	avr-gcc -mmcu=atmega32 -Os -mcall-prologues -o $(TRG).elf $(TRG).c $(ASM) $(SRC) -lm
-#avr-gcc -save-temps -mmcu=atmega32 -Os -mcall-prologues -o $(TRG).elf $(TRG).c $(ASM) $(SRC) -lm
+#	avr-gcc -save-temps -mmcu=atmega32 -Os -mcall-prologues -o $(TRG).elf $(TRG).c $(ASM) $(SRC) -lm
 	avr-objcopy -O ihex $(TRG).elf $(TRG).hex
 	avr-size $(TRG).elf
 

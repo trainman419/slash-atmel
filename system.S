@@ -88,6 +88,10 @@ __vector_11:
    push r31
    push r30
    push r29
+   push r28
+   ; grab SREG before we change it
+   in r28, 0x3f ; SREG
+
    ldi r31, hi8(process_table+38)
    ldi r30, lo8(process_table+38)
 
@@ -109,6 +113,10 @@ __vector_11:
 ;   ld r29, Z
 ;   inc r29
 ;   st Z, r29
+
+   ; restore sreg
+   out 0x3f, r28
+   pop r28
    pop r29
    pop r30
    pop r31
@@ -544,12 +552,10 @@ system_loop:
 .global process_table
    .type process_table, @object
 ;   .size process_table, 148 ; space for 4 processes @P_SZ bytes each
-;   .size process_table, P_SZ*4 ; space for 4 processes @P_SZ bytes each
-   .size process_table, 160 ; space for 4 processes @P_SZ bytes each
+   .size process_table, P_SZ*4 ; space for 4 processes @P_SZ bytes each
 process_table:
 ;   .skip 148,0 ; layout: r0-r31, SREG, RET, SP
-;   .skip P_SZ*4,0 ; layout: r0-r31, SREG, RET, SP
-   .skip 160,0 ; layout: r0-r31, SREG, RET, SP
+   .skip P_SZ*4,0 ; layout: r0-r31, SREG, RET, SP
 .global current_pid
    .type current_pid, @object
    .size current_pid, 1

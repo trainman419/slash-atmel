@@ -1,0 +1,66 @@
+2048 bytes total
+
+bss: 222 (140 for OS)
+data: 30
+(total 252)
+
+.bss:
+process_table     160
+current_pid       1
+num_pids          1
+rx_head           1
+rx_size           1
+tx_head           1
+tx_size           1
+rx_buf            8
+tx_buf            8
+servo_state       1
+high              1
+servo_output      1
+                  185 subtotal
+.comm
+servo_position    16
+servo_low_time    16
+battery           1
+lspeed            2
+rspeed            2
+                  222 total
+
+.data
+"Calibrating"     12
+"Compass"         8
+"x: "             4
+"y: "             4
+"x "              3
+" y "             4
+" "               2     +
+"Waiting "        9     +
+" +"              3     +
+" -"              3     +
+"Waiting data"    13    +
+                  65 total
+                  30    +total
+
+internal memory addresses: 0x060 to 0x85F
+
+__data_start      60    96    0
+process_table:    7e    126   30
+current_pid:      11e   286   160
+num_pids:         11f   287   1
+servo_state:      120   288   1
+high:             121   289   1
+rx_head:          122   290   1
+rx_size:          123   291   1
+tx_head:          124   292   1
+tx_size:          125   293   1
+lspeed:           126   294   1
+battery:          128   296   2
+rspeed:           129   297   1
+servo_low_time:   12b   299   2
+servo_position:   13b   315   16
+servo_output:     14b   331   16
+rx_buf:           14c   332   1
+tx_buf:           154   340   8
+_end              15c   348   8
+
+stack: 64 bytes per process
