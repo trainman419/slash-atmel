@@ -11,6 +11,7 @@ void system_init(void);
 void yeild(void);
 
 extern char current_pid;
+extern char num_pids;
 
 struct pid_entry {
    unsigned char r[32];

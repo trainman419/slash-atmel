@@ -86,32 +86,65 @@ void battery_thread() {
    }
 }
 
-/* extend the OS to run this on a strict schedule */
+/* extend the OS to run this on a strict schedule: DONE! */
+#define WHEELDIV 2000
 void wheelmon() {
    u16 lcnt = 0;
    u16 rcnt = 0;
+   u08 l, r;
+   l = digital(0);
+   r = digital(1);
    while(1) {
       /* read wheel sensors and update computed wheel speed */
       /* don't know if this is left or right. I'll just guess. */
       /* TODO: check this and make sure it's right */
-      /*if( digital(0) ) {
-         led_on();
+      if( digital(0) == l ) {
          lcnt++;
+         if( lspeed > WHEELDIV/lcnt ) lspeed = WHEELDIV/lcnt;
+         if( lcnt > WHEELDIV+1) {
+            lcnt = WHEELDIV+1;
+            lspeed = 0;
+         }
       } else {
-         led_off();
-         lspeed = 1000/lcnt;
+         lspeed = WHEELDIV/lcnt;
          lcnt = 0;
+         l = digital(0);
       }
-      if( digital(1) ) {
+      if( digital(1) == r ) {
          rcnt++;
+         if( rspeed > WHEELDIV/rcnt ) rspeed = WHEELDIV/rcnt;
+         if( rcnt > WHEELDIV+1 ) {
+            rcnt = WHEELDIV+1;
+            rspeed = 0;
+         }
       } else {
-         rspeed = 1000/rcnt;
+         rspeed = WHEELDIV/rcnt;
          rcnt = 0;
-      }*/
+         r = digital(1);
+      }
 
       /* as written now, this should take maybe 10uS to execute. */
 
       /* yeild the processor until we need to run again */
+      yeild();
+   }
+}
+
+
+/* run at 50Hz or less */
+s16 target_speed;
+   s08 power = 0; 
+void speedman() {
+   s16 speed = 0;
+   while(1) {
+      led_on();
+      speed = (lspeed + rspeed)/2;
+
+      if( speed < target_speed ) power++;
+      if( speed > target_speed ) power--;
+
+      set_servo_position(0, power+120);
+      //led_off();
       yeild();
    }
 }
@@ -129,24 +162,26 @@ int main(void)
 
    lspeed = 0;
    rspeed = 0;
+   target_speed = 0;
 
    initialize();
    servo_init();
    compass_init();
    serial_init();
 
-   schedule(0);
-   priority(255);
    system_init();
+   schedule(0);
+   priority(100);
    system(wheelmon, 1, 0); /* once per mS, highest priority */
-   
+   system(speedman, 20, 1); /* every 20mS (50Hz) to manage speed */
 
    set_servo_position(0,120); /* power */
    set_servo_position(1,120); /* steering */
    delay_ms(40); /* wait for switch to stabilize? */
    while(!get_sw1()) {
       a = knob();
-      set_servo_position(0,a);
+      //set_servo_position(0,a);
+      target_speed = a - 120;
       clear_screen();
       print_string("Waiting ");
       print_int(lspeed);
@@ -154,11 +189,14 @@ int main(void)
       print_int(rspeed);
       next_line();
       print_int(a);
+      print_string(" ");
+      print_int(num_pids);
       if( get_sw1() ) {
          print_string(" +");
       } else {
          print_string(" -");
       }
+      yeild();
       delay_ms(40);
    }
 

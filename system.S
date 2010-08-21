@@ -83,8 +83,6 @@
 .global __vector_11
 .global yeild
 __vector_11: 
-   sbi 0x1a, 4
-   sbi 0x1b, 4
    push r31
    push r30
    push r29
@@ -122,10 +120,8 @@ __vector_11:
    pop r31
 
 yeild:
-   sbi 0x1a, 4
-   sbi 0x1b, 4
-;   cli  ;disable interrupts
-   sei  ; enable interrupts; we can afford to be interrupted here
+   cli  ;disable interrupts
+;   sei  ; enable interrupts; we can afford to be interrupted here
    push r29
    push r30
    push r31
@@ -217,6 +213,12 @@ L2:
    lds r31, num_pids
    ldi r30, P_SZ
 
+   ; DEBUG: check that we're running <= 4 processes
+;   cpi r31, 4
+;   brlt L9
+;   ldi r31, 4
+L9:
+
    ; load address of process_table into Y
    ldi r29, hi8(process_table)
    ldi r28, lo8(process_table)
@@ -246,54 +248,26 @@ L3:
    ; actually do stuff here!
    mov r18, r25
    mov r17, r31
+   dec r17
 
 
 L4:
-   mov r27, r31
-L7:
-   cbi 0x1b, 4
-   sbi 0x1b, 4
-   dec r27
-   brne L7
-
    dec r31
    brne L3 ; loop if r31 != 0
 
    ; next pid is r17
-;   mul r17, r30
-;   add r0, r28
-;   adc r1, r29
-;   mov r31, r1
-;   mov r30, r0
-;   adiw r30, 38 ; offset for last run
-;   clr r0
-;   st Z, r0 ; store 0 at last run-time
+   mul r17, r30
+   add r0, r28
+   adc r1, r29
+   mov r31, r1
+   mov r30, r0
+   adiw r30, 38 ; offset for last run
+   clr r0
+   st Z, r0 ; store 0 at last run-time
 
    mov r30, r17
-;   ldi r30, 0
    ; r30 is now next PID to run
    ; END OF SCHEDULER
-
-   ; busy wait for a while
-   ldi r31, 20
-L6:
-   dec r31
-   brne L6
-
-   ; flash the LED 1+PID times (really fast!)
-   mov r31, r30
-   inc r31
-   sbi 0x1a, 4
-L5:
-   cbi 0x1b, 4
-   nop
-   nop
-   sbi 0x1b, 4
-   dec r31
-   brne L5
-
-   ; load pid 0, regardless of scheduler decision :(
-   ldi r30, 0
 
    sts current_pid, r30 ; save to SRAM
    ldi r31, P_SZ
@@ -341,7 +315,7 @@ L5:
    ld r29, Z+  ; SPH from SRAM
    out 0x3d, r28 ; SPL
    out 0x3e, r29 ; SPH
-   sei ; enable interrupts now that we're done writing the stack pointer
+;   sei ; enable interrupts now that we're done writing the stack pointer
 
    sbiw r30, 4 ; skip back to return address
    ; put return address back on stack
@@ -367,11 +341,8 @@ L5:
    ; pop r30 and r31
    pop r30
    pop r31
-   sbi 0x1a, 4
-   cbi 0x1b, 4
    reti ; return and enable interrupts
-   ; 124 instructions if I've counted properly
-   ; approximately 8uS; round up to 20uS
+   ; measured run-time of about 12uS; overhead of about 1.2% cpu-time
 
 .global system_init
 system_init:
