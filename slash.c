@@ -132,6 +132,7 @@ void wheelmon() {
 
 
 /* run at 50Hz or less */
+#define SPEED_DIV 4
 s16 target_speed;
    s08 power = 0; 
 void speedman() {
@@ -140,11 +141,17 @@ void speedman() {
       led_on();
       speed = (lspeed + rspeed)/2;
 
-      if( speed < target_speed ) power++;
-      if( speed > target_speed ) power--;
+      if( speed < target_speed ) {
+         power += (target_speed - speed)/SPEED_DIV;
+      } else if( speed > target_speed ) {
+         //power = -10; // brake
+         power -= (speed - target_speed)/SPEED_DIV;
+      }
+
+      if( target_speed == 0 ) power = 0;
 
       set_servo_position(0, power+120);
-      //led_off();
+      led_off();
       yeild();
    }
 }
@@ -173,7 +180,7 @@ int main(void)
    schedule(0);
    priority(100);
    system(wheelmon, 1, 0); /* once per mS, highest priority */
-   system(speedman, 20, 1); /* every 20mS (50Hz) to manage speed */
+   system(speedman, 200, 1); /* every 20mS (50Hz) to manage speed */
 
    set_servo_position(0,120); /* power */
    set_servo_position(1,120); /* steering */
@@ -190,7 +197,7 @@ int main(void)
       next_line();
       print_int(a);
       print_string(" ");
-      print_int(num_pids);
+      print_int(power);
       if( get_sw1() ) {
          print_string(" +");
       } else {

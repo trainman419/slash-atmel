@@ -102,15 +102,15 @@ __vector_11:
    inc r29
    st Z, r29
 
-;   adiw r30, P_SZ
-;   ld r29, Z
-;   inc r29
-;   st Z, r29
+   adiw r30, P_SZ
+   ld r29, Z
+   inc r29
+   st Z, r29
 
-;   adiw r30, P_SZ
-;   ld r29, Z
-;   inc r29
-;   st Z, r29
+   adiw r30, P_SZ
+   ld r29, Z
+   inc r29
+   st Z, r29
 
    ; restore sreg
    out 0x3f, r28
@@ -202,7 +202,7 @@ L2:
 ;   next = 0;
 ;   priority = 255;
 ;   for( i=0; i<num_pids; i++ ) {
-;      if( s[i] <= l[i] )
+;      if( l[i] >= s[i] )
 ;         if( p[i] < priority ) {
 ;            priority = p[i];
 ;            next = i;
@@ -212,12 +212,6 @@ L2:
 ;  
    lds r31, num_pids
    ldi r30, P_SZ
-
-   ; DEBUG: check that we're running <= 4 processes
-;   cpi r31, 4
-;   brlt L9
-;   ldi r31, 4
-L9:
 
    ; load address of process_table into Y
    ldi r29, hi8(process_table)
