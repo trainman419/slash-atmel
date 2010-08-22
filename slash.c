@@ -144,6 +144,13 @@ inline s16 abs(s16 a) {
 
 /* run at 50Hz or less */
 #define SPEED_DIV 4
+
+#define M_OFF 0
+#define M_FORWARD 1
+#define M_BRAKE 2
+#define M_REVERSE 3
+
+u08 mode;
 s16 power = 0; 
 void speedman() {
    s16 speed = 0;
@@ -151,7 +158,8 @@ void speedman() {
    s16 slip;
    u08 i;
    // keep track of what the speed control thinks we're doing
-   s08 dir = 0; // 0: stopped 1: forward -1: reverse
+   //s08 dir = 0; // 0: stopped 1: forward -1: reverse
+   mode = M_OFF;
 
    // true PID control:
    // e: error
@@ -170,13 +178,13 @@ void speedman() {
    }
    last_p = 0;
 
-
    schedule(100); // 10 times/second
 
    while(1) {
       led_on();
       speed = (lspeed + rspeed)/2;
-      if( dir < 0 ) speed = -speed;
+      //if( dir < 0 ) speed = -speed;
+      if( mode == M_REVERSE  ) speed = -speed;
       slip = abs(lspeed - rspeed);
 
       e = target_speed - speed; 
@@ -193,9 +201,9 @@ void speedman() {
       power += e*Kp + de*Kd + ie/Ki;
 
       // hardcoded braking
-      if( dir == 1 && target_speed == 0 && e < 0 ) {
+      /*if( dir == 1 && target_speed == 0 && e < 0 ) {
          power -= 128;
-      }
+      }*/
 
       last_p++;
       if( last_p > 15 ) last_p = 0;
@@ -209,9 +217,29 @@ void speedman() {
       if( power/16 > 120 ) power = 0;
       if( power/16 < -120 ) power = 0;
 
-      if( power == 0 && speed == 0 ) dir = 0;
+      /*if( power == 0 && speed == 0 ) dir = 0;
       if( dir == 0 && power < 0 ) dir = -1;
-      if( dir == 0 && power > 0 ) dir = 1;
+      if( dir == 0 && power > 0 ) dir = 1;*/
+      // motor controller dead range: 113-124
+      if( power/16 > 4 ) {
+         mode = M_FORWARD;
+      } else if( mode == M_FORWARD ) {
+         if( power/16 < -6 ) {
+            mode = M_BRAKE;
+         }
+      } else if( mode == M_BRAKE ) {
+         if( -6 > power/16 && power/16 < 4 ) {
+            mode = M_OFF;
+         }
+      } else if( mode == M_OFF ) {
+         if( power/16 < -6 ) {
+            mode = M_REVERSE;
+         }
+      }
+
+      // if we're braking, use maximum power
+      if( mode == M_BRAKE ) power = -1500; 
+
       set_servo_position(0, power/16+120);
       oldspeed = speed;
       led_off();
@@ -259,14 +287,17 @@ int main(void)
       print_int(rspeed);
       next_line();
       print_int(target_speed);
+      //print_int(a);
       print_string(" ");
       print_int(power);
-      if( get_sw1() ) {
+      print_string(" ");
+      print_int(mode);
+      /*if( get_sw1() ) {
          print_string(" +");
       } else {
          print_string(" -");
-      }
-      yeild();
+      }*/
+      //yeild();
       delay_ms(40);
    }
 
@@ -278,3 +309,13 @@ int main(void)
 }
 
 
+/* general notes:
+ *
+ * tire circumference: 13"
+ *
+ * 1 speed unit ~= 6.5 in/second ~= 0.37 MPH
+ * 1 MPH ~= 17.6 in/second ~= 2 speed units
+ * speed 25 ~= 9.2 MPH
+ * 10 MPH ~= speed 27
+ * 5 MPH ~= speed 13.4
+ */
