@@ -33,6 +33,7 @@ static int sine[64] = {0,6,13,19,25,31,38,44,50,56,62,68,74,80,86,92,98,104,
 volatile u08 battery;
 volatile s16 lspeed; /* left wheel speed (Hz) */
 volatile s16 rspeed; /* right wheel speed (Hz) */
+volatile s16 target_speed;
 
 u08 IR(u08 addr)
 {
@@ -61,9 +62,15 @@ void thread0() {
       bytes[1] = rx_byte();
       bytes[2] = rx_byte();
       speed = bytes[1]>30?30:bytes[1];
-      speed = (s16)speed + 120;
       steer = (s16)bytes[2] + 120;
-      set_servo_position(0,speed);   /* main drive */
+
+      // divide speed from propeller by 4
+      speed = speed/2;
+      // limit top speed to 25 2*HZ
+      if( speed > 25 ) speed = 25;
+      if( speed < -25 ) speed = -25;
+      target_speed = speed;
+      //set_servo_position(0,speed);   /* main drive */
       set_servo_position(1,steer); /* steering */
 
       led_on();
@@ -130,27 +137,83 @@ void wheelmon() {
    }
 }
 
+inline s16 abs(s16 a) {
+   if( a < 0 ) return -a;
+   return a;
+}
 
 /* run at 50Hz or less */
 #define SPEED_DIV 4
-s16 target_speed;
-   s08 power = 0; 
+s16 power = 0; 
 void speedman() {
    s16 speed = 0;
+   s16 oldspeed = 0;
+   s16 slip;
+   u08 i;
+   // keep track of what the speed control thinks we're doing
+   s08 dir = 0; // 0: stopped 1: forward -1: reverse
+
+   // true PID control:
+   // e: error
+   // MV = Kp*e + Ki*integral(e, 0 to t) + Kd*de/dt
+   s16 e = 0; // error
+   s16 ie = 0; // integral
+   s16 de = 0; // derivative
+   static s16 Kp = 1; // proportional constant
+   static s16 Ki = 32; // integral constant
+   static s16 Kd = 8; // derivative constant
+   s16 last[16]; // 1.6 seconds of data; should be enough to compensate for
+                  // startup
+   u08 last_p = 0;
+   for( last_p = 0; last_p < 16; last_p++ ) {
+      last[last_p] = 0;
+   }
+   last_p = 0;
+
+
+   schedule(100); // 10 times/second
+
    while(1) {
       led_on();
       speed = (lspeed + rspeed)/2;
+      if( dir < 0 ) speed = -speed;
+      slip = abs(lspeed - rspeed);
 
-      if( speed < target_speed ) {
-         power += (target_speed - speed)/SPEED_DIV;
-      } else if( speed > target_speed ) {
-         //power = -10; // brake
-         power -= (speed - target_speed)/SPEED_DIV;
+      e = target_speed - speed; 
+
+      ie = 0;
+      for( i=0; i<16; i++ ) {
+         ie += last[i];
       }
 
-      if( target_speed == 0 ) power = 0;
+      de = e - last[last_p];
 
-      set_servo_position(0, power+120);
+      //power += e/Kp + ie/Ki + de/Kd;
+      //power += e*Kp + de*Kd;
+      power += e*Kp + de*Kd + ie/Ki;
+
+      // hardcoded braking
+      if( dir == 1 && target_speed == 0 && e < 0 ) {
+         power -= 128;
+      }
+
+      last_p++;
+      if( last_p > 15 ) last_p = 0;
+      last[last_p] = e;
+      
+
+      //if( target_speed == 0 ) power = 0;
+      if( target_speed == 0 && speed == 0 ) power = 0;
+      if( target_speed == 0 && power > 0 ) power = 0;
+      //if( power < 0 ) power = 0;
+      if( power/16 > 120 ) power = 0;
+      if( power/16 < -120 ) power = 0;
+
+      if( power == 0 && speed == 0 ) dir = 0;
+      if( dir == 0 && power < 0 ) dir = -1;
+      if( dir == 0 && power > 0 ) dir = 1;
+      set_servo_position(0, power/16+120);
+      oldspeed = speed;
       led_off();
       yeild();
    }
@@ -180,7 +243,7 @@ int main(void)
    schedule(0);
    priority(100);
    system(wheelmon, 1, 0); /* once per mS, highest priority */
-   system(speedman, 200, 1); /* every 20mS (50Hz) to manage speed */
+   system(speedman, 100, 1); /* every 20mS (50Hz) to manage speed */
 
    set_servo_position(0,120); /* power */
    set_servo_position(1,120); /* steering */
@@ -188,14 +251,14 @@ int main(void)
    while(!get_sw1()) {
       a = knob();
       //set_servo_position(0,a);
-      target_speed = a - 120;
+      target_speed = (a - 120)/2;
       clear_screen();
       print_string("Waiting ");
       print_int(lspeed);
       print_string(" ");
       print_int(rspeed);
       next_line();
-      print_int(a);
+      print_int(target_speed);
       print_string(" ");
       print_int(power);
       if( get_sw1() ) {
