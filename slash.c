@@ -67,8 +67,8 @@ void thread0() {
       // divide speed from propeller by 4
       speed = speed/2;
       // limit top speed to 25 2*HZ
-      if( speed > 25 ) speed = 25;
-      if( speed < -25 ) speed = -25;
+      if( speed > 18 ) speed = 18;
+      if( speed < -18 ) speed = -18;
       target_speed = speed;
       //set_servo_position(0,speed);   /* main drive */
       set_servo_position(1,steer); /* steering */
