@@ -35,6 +35,8 @@ volatile s16 lspeed; /* left wheel speed (Hz) */
 volatile s16 rspeed; /* right wheel speed (Hz) */
 volatile s16 target_speed;
 
+volatile s16 power = 0; 
+
 u08 IR(u08 addr)
 {
    u16 dist = analog(addr);
@@ -80,6 +82,8 @@ void thread0() {
       print_int(bytes[1]);
       print_string(" ");
       print_int((s08)bytes[2]);
+      print_string(" ");
+      print_int(power);
       led_off();
    }
 }
@@ -151,7 +155,6 @@ inline s16 abs(s16 a) {
 #define M_REVERSE 3
 
 u08 mode;
-s16 power = 0; 
 void speedman() {
    s16 speed = 0;
    s16 oldspeed = 0;
@@ -204,6 +207,9 @@ void speedman() {
       /*if( dir == 1 && target_speed == 0 && e < 0 ) {
          power -= 128;
       }*/
+      if( mode == M_FORWARD && target_speed == 0 && speed != 0 ) {
+         power = -1500; // lots of braking
+      }
 
       last_p++;
       if( last_p > 15 ) last_p = 0;
@@ -212,7 +218,7 @@ void speedman() {
 
       //if( target_speed == 0 ) power = 0;
       if( target_speed == 0 && speed == 0 ) power = 0;
-      if( target_speed == 0 && power > 0 ) power = 0;
+      //if( target_speed == 0 && power > 0 ) power = 0;
       //if( power < 0 ) power = 0;
       if( power/16 > 120 ) power = 0;
       if( power/16 < -120 ) power = 0;
@@ -238,7 +244,7 @@ void speedman() {
       }
 
       // if we're braking, use maximum power
-      if( mode == M_BRAKE ) power = -1500; 
+      //if( mode == M_BRAKE ) power = -1500; 
 
       set_servo_position(0, power/16+120);
       oldspeed = speed;
