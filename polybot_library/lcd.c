@@ -64,7 +64,7 @@ void print_string(char* string) {
 }
 
 void print_int(u16 number) {
-  u08 test[5];
+  u08 test[7];
 
   print_string((char*)itoa(number,test,10
   ));

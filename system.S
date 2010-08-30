@@ -49,6 +49,7 @@
 ;  TOTAL: 40 bytes
 
 #define P_SZ 40
+#define STACK_SZ 96
 
 ;total space allocated per-process: 98 bytes
 ; not bad!
@@ -444,8 +445,8 @@ L1:
    st X+, r30 ; low byte of function pointer second
    ; now for stack pointer nonsense (using Z to write to new stack)
    lds r25, num_pids
-   ; multiply by 64 (2^6)
-   ldi r24, 64
+   ; multiply by STACK_SZ (2^6)
+   ldi r24, STACK_SZ
    mul r24, r25 ; stack pointer offset in r1:r0
    ldi r30, 0x5f ; higest ram address (low byte)
    ldi r31, 0x08 ; highet ram address (high byte)
