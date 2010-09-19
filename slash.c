@@ -165,7 +165,7 @@ void thread0() {
    while(1) {
       /*bytes[0] = rx_byte();*/
       u08 steer;
-      u08 speed;
+      s08 speed;
       bytes[0] = 0;
       while (rx_byte() != 'S'); /* next input byte */
 
@@ -179,7 +179,9 @@ void thread0() {
       } else {
          //bytes[1] = rx_byte();
          //bytes[2] = rx_byte();
-         speed = bytes[1]>30?30:bytes[1];
+         speed = bytes[1];
+         speed = speed>30?30:speed;
+         speed = speed<-30?-30:speed;
          steer = (s16)bytes[2] + 120;
 
          // divide speed from propeller by 4
@@ -365,15 +367,15 @@ void speedman() {
       if( power/16 > 4 ) {
          mode = M_FORWARD;
       } else if( mode == M_FORWARD ) {
-         if( power/16 < -6 ) {
+         if( power/16 < -5 ) {
             mode = M_BRAKE;
          }
       } else if( mode == M_BRAKE ) {
-         if( -6 < power/16 && power/16 < 4 ) {
+         if( -5 < power/16 && power/16 < 4 ) {
             mode = M_OFF;
          }
       } else if( mode == M_OFF ) {
-         if( power/16 < -6 ) {
+         if( power/16 < -5 ) {
             mode = M_REVERSE;
          }
       }
