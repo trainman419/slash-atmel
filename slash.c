@@ -17,8 +17,6 @@
 
 /* TODO:
  *
- * compensate drive power based on wheel velocity
- *
  * build a power cutoff and write the battery to power down when our battery
  *  gets too low
  */
@@ -38,15 +36,20 @@ static int bsin[64] = {
 59, 60, 60, 61, 61, 62, 62, 62, 63, 63, 63, 64, 64, 64, 64, 64
 };
 
-/* byte arcsine table */
-/*static int asin[65] = {
- 0,  1,  1,  2,  2,  3,  4, 
-}*/
-
 volatile u08 battery;
 volatile s16 lspeed; /* left wheel speed (Hz) */
 volatile s16 rspeed; /* right wheel speed (Hz) */
+volatile u16 lcount; /* left wheel count, revolutions */
+volatile u16 rcount; /* right wheel count, revolutions */
 volatile s16 target_speed;
+
+// speed controller mode
+#define M_OFF 0
+#define M_FORWARD 1
+#define M_BRAKE 2
+#define M_REVERSE 3
+u08 mode;
+
 
 volatile s16 power = 0; 
 
@@ -156,12 +159,39 @@ u08 IR(u08 addr)
    return dist;
 }
 
-/* first thread, if I need it */
+inline void tx_packet(struct heading h) {
+   s08 tmp;
+   // transmit compass heading
+   tx_byte(atan2(h.x, h.y));
+   // transmit battery reading
+   tx_byte(battery);
+   // transmit speeds
+   tmp = lspeed;
+   if( mode == M_REVERSE ) tmp = -tmp;
+   tx_byte(tmp); 
+
+   tmp = rspeed;
+   if( mode == M_REVERSE ) tmp = -tmp;
+   tx_byte(tmp); 
+   // transmit counts
+   tx_byte(lcount & 0xFF); // low
+   tx_byte(lcount >> 8); // hi
+   tx_byte(rcount & 0xFF); // low
+   tx_byte(rcount >> 8); // hi
+   // end-of-packet null
+   tx_byte(0);
+   return;
+}
+
+/* first thread, communication with the higher-level controller */
 #define PACKET 7
 void thread0() {
    u08 bytes[PACKET];
    u08 i;
    struct heading h;
+   h.x = 0;
+   h.y = 0;
+   tx_packet(h);
    while(1) {
       /*bytes[0] = rx_byte();*/
       u08 steer;
@@ -198,11 +228,7 @@ void thread0() {
          // compass calibration
          h.x -= 11;
          h.y += 15;
-         /*tx_byte(h.x & 0xFF); // low
-         tx_byte(h.x >> 8);   // hi
-         tx_byte(h.y & 0xFF); // low
-         tx_byte(h.y >> 8);   // hi*/
-         tx_byte(atan2(h.x, h.y));
+         tx_packet(h);
       }
 
       clear_screen();
@@ -211,6 +237,8 @@ void thread0() {
       print_int((s08)bytes[2]);
       print_string(" ");
       print_int(power);
+      print_string(" ");
+      print_int(battery);
       next_line();
       print_int(bytes[3]);
       print_string(" ");
@@ -218,10 +246,6 @@ void thread0() {
       print_string(" ");
       print_int(bytes[5]);
       print_string(" ");
-      /*print_int(h.x);
-      print_string(" ");
-      print_int(h.y);
-      print_string(" ");*/
       print_int(atan2(h.x, h.y));
    }
 }
@@ -255,10 +279,12 @@ void wheelmon() {
             lspeed = 0;
          }
       } else {
+         if(l) lcount++;
          lspeed = WHEELDIV/lcnt;
          lcnt = 0;
          l = digital(0);
       }
+
       if( digital(1) == r ) {
          rcnt++;
          if( rspeed > WHEELDIV/rcnt ) rspeed = WHEELDIV/rcnt;
@@ -267,6 +293,7 @@ void wheelmon() {
             rspeed = 0;
          }
       } else {
+         if(r) rcount++;
          rspeed = WHEELDIV/rcnt;
          rcnt = 0;
          r = digital(1);
@@ -282,14 +309,8 @@ void wheelmon() {
 /* run at 50Hz or less */
 #define SPEED_DIV 4
 
-#define M_OFF 0
-#define M_FORWARD 1
-#define M_BRAKE 2
-#define M_REVERSE 3
-
 #define I_SZ 5
 
-u08 mode;
 void speedman() {
    s16 speed = 0;
    s16 oldspeed = 0;
@@ -401,6 +422,8 @@ int main(void)
 
    lspeed = 0;
    rspeed = 0;
+   lcount = 0;
+   rcount = 0;
    target_speed = 0;
 
    initialize();
@@ -413,11 +436,12 @@ int main(void)
    priority(100);
    system(wheelmon, 1, 0); /* once per mS, highest priority */
    system(speedman, 100, 1); /* every 20mS (50Hz) to manage speed */
+   system(battery_thread, 250, 2); /* every quarter-second, lowest priority */
 
    set_servo_position(0,120); /* power */
    set_servo_position(1,120); /* steering */
    delay_ms(40); /* wait for switch to stabilize? */
-   while(!get_sw1()) {
+   /*while(!get_sw1()) {
       a = knob();
       //set_servo_position(0,a);
       target_speed = (a - 120)/2;
@@ -428,19 +452,14 @@ int main(void)
       print_int(rspeed);
       next_line();
       print_int(target_speed);
-      //print_int(a);
       print_string(" ");
       print_int(power);
       print_string(" ");
       print_int(mode);
-      /*if( get_sw1() ) {
-         print_string(" +");
-      } else {
-         print_string(" -");
-      }*/
       //yeild();
       delay_ms(40);
-   }
+   }*/
+   delay_ms(2000); // wait for propeller board to start up
 
    clear_screen();
    print_string("Waiting data");
