@@ -214,7 +214,7 @@ void thread0() {
          speed = bytes[1];
          speed = speed>30?30:speed;
          speed = speed<-30?-30:speed;
-         steer = (s16)bytes[2] + 120;
+         steer = (s16)bytes[2] + 112;
 
          // divide speed from propeller by 4
          speed = speed/2;
@@ -365,11 +365,17 @@ void speedman() {
       /*if( dir == 1 && target_speed == 0 && e < 0 ) {
          power -= 128;
       }*/
-      if( mode == M_FORWARD && target_speed == 0 && speed != 0 ) {
+      /*if( mode == M_FORWARD && target_speed == 0 && speed != 0 ) {
+         power = -1500; // lots of braking
+      }*/
+      if( mode == M_FORWARD && target_speed > (speed + 4) && speed != 0 ) {
          power = -1500; // lots of braking
       }
       // hardcoded to disengage brakes
-      if( mode == M_BRAKE && ( target_speed > 0 || speed == 0 ) ) {
+      /*if( mode == M_BRAKE && ( target_speed > 0 || speed == 0 ) ) {
+         power = 0;
+      }*/
+      if( mode == M_BRAKE && ( target_speed > speed || speed == 0 ) && power < 0 ) {
          power = 0;
       }
 
@@ -382,23 +388,28 @@ void speedman() {
       if( target_speed == 0 && speed == 0 ) power = 0;
 
       // power limits
-      if( power/16 > 120 ) power = 1920;
-      if( power/16 < -120 ) power = -1920;
+      if( power/16 > 120 ) power = 16*120;
+      if( power/16 < -120 ) power = -16*120;
+
+      /* hardcode to put controller into reverse */
+      if( mode == M_BRAKE && target_speed < 0 ) {
+         power = 0;
+      }
 
       // track motor controller state
       // motor controller dead range: 113-124
       if( power/16 > 4 ) {
          mode = M_FORWARD;
       } else if( mode == M_FORWARD ) {
-         if( power/16 < -5 ) {
+         if( power/16 < -6 ) {
             mode = M_BRAKE;
          }
       } else if( mode == M_BRAKE ) {
-         if( -5 < power/16 && power/16 < 4 ) {
+         if( -6 < power/16 && power/16 < 4 ) {
             mode = M_OFF;
          }
       } else if( mode == M_OFF ) {
-         if( power/16 < -5 ) {
+         if( power/16 < -6 ) {
             mode = M_REVERSE;
          }
       }
