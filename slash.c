@@ -204,8 +204,9 @@ void thread0() {
          speed = speed<-30?-30:speed;
          steer = (s16)bytes[2] + 112;
 
-         // divide speed from propeller by 4
-         speed = speed/2;
+         // divide speed from propeller
+         //speed = speed/2;
+
          // limit top speed to 25 2*HZ
          if( speed > 18 ) speed = 18;
          if( speed < -18 ) speed = -18;
@@ -230,11 +231,11 @@ void thread0() {
       print_string(" ");
       print_int(battery);
       next_line();
-      print_int(bytes[3]);
+      print_int(lspeed);
       print_string(" ");
-      print_int(bytes[4]);
+      print_int(rspeed);
       print_string(" ");
-      print_int(bytes[5]);
+      print_int(qspeed);
       print_string(" ");
       print_int(atan2(h.x, h.y));
    }
@@ -251,7 +252,6 @@ void battery_thread() {
 
 /* run at 50Hz or less */
 #define SPEED_DIV 4
-
 
 int main(void)
 {
@@ -288,7 +288,7 @@ int main(void)
    /*while(!get_sw1()) {
       a = knob();
       //set_servo_position(0,a);
-      target_speed = (a - 120)/2;
+      target_speed = ((a - 120)/2)*6;
       clear_screen();
       print_string("Waiting ");
       print_int(lspeed);
@@ -299,7 +299,9 @@ int main(void)
       print_string(" ");
       print_int(power);
       print_string(" ");
-      print_int(mode);
+      print_int(qspeed);
+      print_string(" ");
+      print_int(power/16 + 120);
       //yeild();
       delay_ms(40);
    }*/
@@ -311,7 +313,6 @@ int main(void)
 
    thread0();
 }
-
 
 /* general notes:
  *

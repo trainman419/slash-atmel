@@ -28,12 +28,12 @@ void speedman() {
    s16 ie = 0; // integral
    s16 de = 0; // derivative
    static s16 Kp = 2; // proportional constant
-   static s16 Ki = 8; // integral constant
-   static s16 Kd = 20; // derivative constant
+   static s16 Ki = 0; // integral constant
+   static s16 Kd = 0; // derivative constant
    s16 last[I_SZ]; // 1.6 seconds of data; should be enough to compensate for
                   // startup
    u08 last_p = 0;
-   for( last_p = 0; last_p < 16; last_p++ ) {
+   for( last_p = 0; last_p < I_SZ; last_p++ ) {
       last[last_p] = 0;
    }
    last_p = 0;
@@ -42,9 +42,10 @@ void speedman() {
 
    while(1) {
       led_on();
-      speed = (lspeed + rspeed)/2;
+      //speed = (lspeed + rspeed)/2;
+      speed = qspeed;
       //if( dir < 0 ) speed = -speed;
-      if( mode == M_REVERSE  ) speed = -speed;
+      //if( mode == M_REVERSE  ) speed = -speed;
       slip = abs(lspeed - rspeed);
 
       e = target_speed - speed; 
@@ -53,6 +54,7 @@ void speedman() {
       for( i=0; i<I_SZ; i++ ) {
          ie += last[i];
       }
+      ie /= I_SZ;
 
       de = e - last[last_p];
 
@@ -67,16 +69,16 @@ void speedman() {
       /*if( mode == M_FORWARD && target_speed == 0 && speed != 0 ) {
          power = -1500; // lots of braking
       }*/
-      if( mode == M_FORWARD && target_speed > (speed + 4) && speed != 0 ) {
+      /*if( mode == M_FORWARD && target_speed > (speed + 4) && speed != 0 ) {
          power = -1500; // lots of braking
-      }
+      }*/
       // hardcoded to disengage brakes
       /*if( mode == M_BRAKE && ( target_speed > 0 || speed == 0 ) ) {
          power = 0;
       }*/
-      if( mode == M_BRAKE && ( target_speed > speed || speed == 0 ) && power < 0 ) {
+      /*if( mode == M_BRAKE && ( target_speed > speed || speed == 0 ) && power < 0 ) {
          power = 0;
-      }
+      }*/
 
       last_p++;
       if( last_p >= I_SZ ) last_p = 0;
