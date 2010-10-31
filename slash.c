@@ -9,6 +9,9 @@
 #include "compass.h"
 #include <avr/io.h>
 
+#include "wheelmon.h"
+#include "speedman.h"
+
 #define MIN_POWER 30
 #define BACKUP_MAX 100
 #define BACKUP_STEER 20
@@ -37,21 +40,6 @@ static int bsin[64] = {
 };
 
 volatile u08 battery;
-volatile s16 lspeed; /* left wheel speed (Hz) */
-volatile s16 rspeed; /* right wheel speed (Hz) */
-volatile u16 lcount; /* left wheel count, revolutions */
-volatile u16 rcount; /* right wheel count, revolutions */
-volatile s16 target_speed;
-
-// speed controller mode
-#define M_OFF 0
-#define M_FORWARD 1
-#define M_BRAKE 2
-#define M_REVERSE 3
-u08 mode;
-
-
-volatile s16 power = 0; 
 
 inline s16 abs(s16 a) {
    if( a < 0 ) return -a;
@@ -261,166 +249,9 @@ void battery_thread() {
    }
 }
 
-/* extend the OS to run this on a strict schedule: DONE! */
-#define WHEELDIV 2000
-void wheelmon() {
-   u16 lcnt = 0;
-   u16 rcnt = 0;
-   u08 l, r;
-   l = digital(0);
-   r = digital(1);
-   while(1) {
-      /* read wheel sensors and update computed wheel speed */
-      /* don't know if this is left or right. I'll just guess. */
-      /* TODO: check this and make sure it's right */
-      if( digital(0) == l ) {
-         lcnt++;
-         if( lspeed > WHEELDIV/lcnt ) lspeed = WHEELDIV/lcnt;
-         if( lcnt > WHEELDIV+1) {
-            lcnt = WHEELDIV+1;
-            lspeed = 0;
-         }
-      } else {
-         if(l) lcount++;
-         lspeed = WHEELDIV/lcnt;
-         lcnt = 0;
-         l = digital(0);
-      }
-
-      if( digital(1) == r ) {
-         rcnt++;
-         if( rspeed > WHEELDIV/rcnt ) rspeed = WHEELDIV/rcnt;
-         if( rcnt > WHEELDIV+1 ) {
-            rcnt = WHEELDIV+1;
-            rspeed = 0;
-         }
-      } else {
-         if(r) rcount++;
-         rspeed = WHEELDIV/rcnt;
-         rcnt = 0;
-         r = digital(1);
-      }
-
-      /* as written now, this should take maybe 10uS to execute. */
-
-      /* yeild the processor until we need to run again */
-      yeild();
-   }
-}
-
 /* run at 50Hz or less */
 #define SPEED_DIV 4
 
-#define I_SZ 5
-
-void speedman() {
-   s16 speed = 0;
-   s16 oldspeed = 0;
-   s16 slip;
-   u08 i;
-   // keep track of what the speed control thinks we're doing
-   //s08 dir = 0; // 0: stopped 1: forward -1: reverse
-   mode = M_OFF;
-
-   // true PID control:
-   // e: error
-   // MV = Kp*e + Ki*integral(e, 0 to t) + Kd*de/dt
-   s16 e = 0; // error
-   s16 ie = 0; // integral
-   s16 de = 0; // derivative
-   static s16 Kp = 2; // proportional constant
-   static s16 Ki = 8; // integral constant
-   static s16 Kd = 20; // derivative constant
-   s16 last[I_SZ]; // 1.6 seconds of data; should be enough to compensate for
-                  // startup
-   u08 last_p = 0;
-   for( last_p = 0; last_p < 16; last_p++ ) {
-      last[last_p] = 0;
-   }
-   last_p = 0;
-
-   schedule(100); // 10 times/second
-
-   while(1) {
-      led_on();
-      speed = (lspeed + rspeed)/2;
-      //if( dir < 0 ) speed = -speed;
-      if( mode == M_REVERSE  ) speed = -speed;
-      slip = abs(lspeed - rspeed);
-
-      e = target_speed - speed; 
-
-      ie = 0;
-      for( i=0; i<I_SZ; i++ ) {
-         ie += last[i];
-      }
-
-      de = e - last[last_p];
-
-      //power += e/Kp + ie/Ki + de/Kd;
-      //power += e*Kp + de*Kd;
-      power += e*Kp + de*Kd + ie/Ki;
-
-      // hardcoded braking
-      /*if( dir == 1 && target_speed == 0 && e < 0 ) {
-         power -= 128;
-      }*/
-      /*if( mode == M_FORWARD && target_speed == 0 && speed != 0 ) {
-         power = -1500; // lots of braking
-      }*/
-      if( mode == M_FORWARD && target_speed > (speed + 4) && speed != 0 ) {
-         power = -1500; // lots of braking
-      }
-      // hardcoded to disengage brakes
-      /*if( mode == M_BRAKE && ( target_speed > 0 || speed == 0 ) ) {
-         power = 0;
-      }*/
-      if( mode == M_BRAKE && ( target_speed > speed || speed == 0 ) && power < 0 ) {
-         power = 0;
-      }
-
-      last_p++;
-      if( last_p >= I_SZ ) last_p = 0;
-      last[last_p] = e;
-      
-
-      // hardcoded full stop
-      if( target_speed == 0 && speed == 0 ) power = 0;
-
-      // power limits
-      if( power/16 > 120 ) power = 16*120;
-      if( power/16 < -120 ) power = -16*120;
-
-      /* hardcode to put controller into reverse */
-      if( mode == M_BRAKE && target_speed < 0 ) {
-         power = 0;
-      }
-
-      // track motor controller state
-      // motor controller dead range: 113-124
-      if( power/16 > 4 ) {
-         mode = M_FORWARD;
-      } else if( mode == M_FORWARD ) {
-         if( power/16 < -6 ) {
-            mode = M_BRAKE;
-         }
-      } else if( mode == M_BRAKE ) {
-         if( -6 < power/16 && power/16 < 4 ) {
-            mode = M_OFF;
-         }
-      } else if( mode == M_OFF ) {
-         if( power/16 < -6 ) {
-            mode = M_REVERSE;
-         }
-      }
-
-      // output
-      set_servo_position(0, power/16+120);
-      oldspeed = speed;
-      led_off();
-      yeild();
-   }
-}
 
 int main(void)
 {

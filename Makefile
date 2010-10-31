@@ -10,7 +10,7 @@ LIB = polybot_library
 
 # these are PolyBot Library source files that your program needs
 SRC = $(LIB)/delays.c $(LIB)/adc.c $(LIB)/lcd.c $(LIB)/utility.c \
-		$(LIB)/servo.c serial.c
+		$(LIB)/servo.c serial.c speedman.c wheelmon.c
 
 # this runs the program target below
 all: download
