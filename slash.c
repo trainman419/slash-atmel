@@ -204,13 +204,10 @@ void thread0() {
          speed = speed<-30?-30:speed;
          steer = (s16)bytes[2] + 112;
 
-         // divide speed from propeller
-         //speed = speed/2;
-
-         // limit top speed to 25 2*HZ
-         if( speed > 18 ) speed = 18;
-         if( speed < -18 ) speed = -18;
-         target_speed = speed;
+         // limit top speed
+         if( speed > 50 ) speed = 50;
+         if( speed < -50 ) speed = -50;
+         target_speed = speed*3;
          //set_servo_position(0,speed);   /* main drive */
          set_servo_position(1,steer); /* steering */
          
