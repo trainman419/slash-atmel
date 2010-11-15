@@ -166,6 +166,8 @@ inline void tx_packet(struct heading h) {
    tx_byte(lcount >> 8); // hi
    tx_byte(rcount & 0xFF); // low
    tx_byte(rcount >> 8); // hi
+   tx_byte(qcount & 0xFF); // low
+   tx_byte(qcount >> 8); // hi
    // transmit button data
    tx_byte(0x80 | digital(2) | (digital(3) << 1));
    // end-of-packet null

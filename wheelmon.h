@@ -13,6 +13,7 @@ extern volatile u16 lcount; /* left wheel count, revolutions */
 extern volatile u16 rcount; /* right wheel count, revolutions */
 
 extern volatile s16 qspeed; /* quaderature encoder speed */
+extern volatile u16 qcount; /* quaderature encoder speed */
 
 void wheelmon();
 

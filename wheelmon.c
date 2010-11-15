@@ -13,6 +13,7 @@ volatile u16 lcount; /* left wheel count, revolutions */
 volatile u16 rcount; /* right wheel count, revolutions */
 
 volatile s16 qspeed; /* quaderature encoder speed */
+volatile u16 qcount; /* quaderature encoder 1/4 turn count */
 
 /* extend the OS to run this on a strict schedule: DONE! */
 #define WHEELDIV 2000
@@ -22,6 +23,8 @@ void wheelmon() {
    u08 l, r;
    l = digital(0);
    r = digital(1);
+
+   qcount = 0;
 
    u08 q1, q2, q1_old, q2_old;
    q1_old = digital(4);
@@ -61,7 +64,6 @@ void wheelmon() {
          r = digital(1);
       }
 
-      /* as written now, this should take maybe 10uS to execute. */
       /* read the quaderature encoder on the drive gear to get better
          direction and speed data */
       if( q1 != q1_old ) {
@@ -74,6 +76,7 @@ void wheelmon() {
          }
          q1_old = q1;
          qcnt = 0;
+         qcount++;
       } else if( q2 != q2_old ) {
          if( q1 == q2 ) {
             // turning backward
@@ -84,6 +87,7 @@ void wheelmon() {
          }
          q2_old = q2;
          qcnt = 0;
+         qcount++;
       } else {
          qcnt++;
          if( qcnt > WHEELDIV+1 ) {
